@@ -1,0 +1,35 @@
+unit UntNegPesqProd;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB, Vcl.Grids,
+  Vcl.DBGrids, Vcl.StdCtrls;
+
+type
+  TFrmNegPesqProd = class(TForm)
+    Image1: TImage;
+    Image2: TImage;
+    Panel1: TPanel;
+    Label5: TLabel;
+    Label1: TLabel;
+    Label2: TLabel;
+    EdtNOME: TEdit;
+    BttnLOCALIZAR: TButton;
+    EdtCNPJ: TEdit;
+    DBGrid1: TDBGrid;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmNegPesqProd: TFrmNegPesqProd;
+
+implementation
+
+{$R *.dfm}
+
+end.

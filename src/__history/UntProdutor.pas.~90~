@@ -1,0 +1,252 @@
+unit UntProdutor;
+
+interface
+
+uses
+    Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+    System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+    Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Data.FMTBcd, Data.DB,
+    Datasnap.DBClient, Datasnap.Provider, Data.SqlExpr;
+
+type
+    TFrmProdutor = class(TForm)
+        Image1: TImage;
+        Image2: TImage;
+        Panel1: TPanel;
+        GroupBox1: TGroupBox;
+        BttnNOVO: TButton;
+        BttnLISTARPRODUTOR: TButton;
+        BttnALTERAR: TButton;
+        GroupBox2: TGroupBox;
+        Label1: TLabel;
+        Label4: TLabel;
+        Label5: TLabel;
+        Label2: TLabel;
+        Label3: TLabel;
+        DBEdit1: TDBEdit;
+        DBEdit4: TDBEdit;
+        DBEdit5: TDBEdit;
+        DBEdit2: TDBEdit;
+        DBEdit3: TDBEdit;
+        GroupBox3: TGroupBox;
+        BttnFINALIZAR: TButton;
+        BttnCANCELAR: TButton;
+        BttnFECHAR: TButton;
+        SQLQryPRODUTOR: TSQLQuery;
+        DtStPrvdrPRODUTOR: TDataSetProvider;
+        ClntDtStPRODUTOR: TClientDataSet;
+        ClntDtStPRODUTORCODPRODUTOR: TFMTBCDField;
+        ClntDtStPRODUTORCPFCNPJ: TWideStringField;
+        ClntDtStPRODUTORNOME: TWideStringField;
+        ClntDtStPRODUTORDTCADASTRO: TSQLTimeStampField;
+        ClntDtStPRODUTORDTULTALTER: TSQLTimeStampField;
+        DtSrcPRODUTOR: TDataSource;
+        SQLQryAUX: TSQLQuery;
+        procedure FormCreate(Sender: TObject);
+        procedure FormClose(Sender: TObject; var Action: TCloseAction);
+        procedure BttnFECHARClick(Sender: TObject);
+        procedure DtSrcPRODUTORStateChange(Sender: TObject);
+        procedure BttnLISTARPRODUTORClick(Sender: TObject);
+        procedure BttnALTERARClick(Sender: TObject);
+        procedure BttnNOVOClick(Sender: TObject);
+        procedure BttnFINALIZARClick(Sender: TObject);
+        procedure ClntDtStPRODUTORAfterPost(DataSet: TDataSet);
+        procedure BttnCANCELARClick(Sender: TObject);
+        procedure DBEdit3Exit(Sender: TObject);
+    private
+    { Private declarations }
+    public
+    { Public declarations }
+    end;
+
+var
+    FrmProdutor: TFrmProdutor;
+
+implementation
+
+uses
+    Unt0002, UntListaProdutor, UntPrincipal;
+
+{$R *.dfm}
+
+procedure TFrmProdutor.BttnALTERARClick(Sender: TObject);
+begin
+    //Editando
+    ClntDtStPRODUTOR.Edit;
+    ClntDtStPRODUTORDTULTALTER.AsString := FrmPrincipal.SQLQryAUX.FieldByName('DTHOJE').AsString;
+
+end;
+
+procedure TFrmProdutor.BttnCANCELARClick(Sender: TObject);
+begin
+
+    //Varificar se o componente esta em inserção ou edição
+    if not (ClntDtStPRODUTOR.State in [DsInsert, DsEdit]) then
+        Abort;
+
+    if Application.MessageBox(pchar('Confirma cancelamento?'), pchar('Aviso!'), MB_ICONQUESTION + MB_YESNO + +MB_DEFBUTTON2) = ID_YES then
+        ClntDtStPRODUTOR.CancelUpdates;
+
+    //Limpar os campos
+    ClntDtStPRODUTOR.Close;
+    with SQLQryPRODUTOR do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT CODPRODUTOR, CPFCNPJ, NOME, DTCADASTRO, DTULTALTER');
+        SQL.Add('  FROM PRODUTOR');
+        SQL.Add(' WHERE CODPRODUTOR = 0 ');
+    end;
+    ClntDtStPRODUTOR.Open;
+end;
+
+procedure TFrmProdutor.BttnFECHARClick(Sender: TObject);
+begin
+    Close;
+end;
+
+procedure TFrmProdutor.BttnFINALIZARClick(Sender: TObject);
+begin
+
+    //Validacao
+    if DBEdit3.Field.Text = '' then
+    begin
+        Application.MessageBox(pchar('Por favor, preencha o campo CPF/CNPJ!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+    end
+    else
+    begin
+        if FrmPrincipal.ValidarCpfCnpj(DBEdit3.Field.Text) = False then
+        begin
+            Application.MessageBox(pchar('Campo CPF/CNPJ inválido!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+            Abort;
+        end;
+
+        with SQLQryAUX do
+        begin
+            Close;
+            SQL.Clear;
+            SQL.Add('SELECT COUNT(*) AS QT, CODPRODUTOR ||''-''|| NOME AS PRODUTOR ');
+            SQL.Add('  FROM PRODUTOR');
+            SQL.Add(' WHERE REPLACE(REPLACE(REPLACE(CPFCNPJ,''.'',''''),''/'',''''),''-'','''') = :CPFCNPJ');
+            SQL.Add(' GROUP BY CODPRODUTOR, NOME');
+            Params.ParamByName('CPFCNPJ').AsString := DBEdit3.Field.Text;
+            Open;
+        end;
+
+        if SQLQryAUX.FieldByName('QT').AsCurrency <> 0 then
+        begin
+            Application.MessageBox(pchar('CPF/CNPJ já Cadastrado.' +  #13#10 +'Produtor: ' + SQLQryAUX.FieldByName('PRODUTOR').AsString +'.'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+            Abort;
+        end;
+
+
+    end;
+
+
+
+
+    //Salvando
+    ClntDtStPRODUTOR.Post;
+
+    //Limpar os campos
+    ClntDtStPRODUTOR.Close;
+    with SQLQryPRODUTOR do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT CODPRODUTOR, CPFCNPJ, NOME, DTCADASTRO, DTULTALTER');
+        SQL.Add('  FROM PRODUTOR');
+        SQL.Add(' WHERE CODPRODUTOR = 0 ');
+    end;
+    ClntDtStPRODUTOR.Open;
+
+    FrmPrincipal.MsgFinal;
+
+end;
+
+procedure TFrmProdutor.BttnLISTARPRODUTORClick(Sender: TObject);
+begin
+
+    try
+        FrmListaProdutor := TFrmListaProdutor.Create(Application);
+        FrmListaProdutor.Caption := 'Listar produtor e cadastro de limite de crédito';
+        FrmListaProdutor.ShowModal;
+    finally
+        FrmListaProdutor.Free;
+    end;
+
+end;
+
+procedure TFrmProdutor.BttnNOVOClick(Sender: TObject);
+begin
+
+    //Achando proximo id valido
+    with FrmPrincipal.SQLQryAUX1 do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT PRODUTOR_DFSEQ.NEXTVAL');
+        SQL.Add('  FROM DUAL');
+        Open;
+    end;
+
+    //Inserindo
+    ClntDtStPRODUTOR.Insert;
+    ClntDtStPRODUTORCODPRODUTOR.AsCurrency := FrmPrincipal.SQLQryAUX1.FieldByName('NEXTVAL').AsCurrency;
+    ClntDtStPRODUTORDTCADASTRO.AsString := FrmPrincipal.SQLQryAUX.FieldByName('DTHOJE').AsString;
+
+end;
+
+procedure TFrmProdutor.ClntDtStPRODUTORAfterPost(DataSet: TDataSet);
+begin
+    //Salvar os dados no banco.
+    ClntDtStPRODUTOR.ApplyUpdates(-1);
+end;
+
+procedure TFrmProdutor.DBEdit3Exit(Sender: TObject);
+begin
+    ClntDtStPRODUTORCPFCNPJ.AsString := FrmPrincipal.FormatarCpfCnpj(DBEdit3.Field.Text);
+end;
+
+procedure TFrmProdutor.DtSrcPRODUTORStateChange(Sender: TObject);
+begin
+
+    //Tratamento dos botoes da tela
+    BttnNOVO.Enabled := (Sender as TDataSource).State in [dsBrowse];
+    BttnALTERAR.Enabled := ((Sender as TDataSource).State in [dsBrowse]) and not ((Sender as TDataSource).DataSet.IsEmpty);
+    BttnFINALIZAR.Enabled := (Sender as TDataSource).State in [dsEdit, dsInsert];
+    BttnCANCELAR.Enabled := (Sender as TDataSource).State in [dsEdit, dsInsert];
+    BttnLISTARPRODUTOR.Enabled := (Sender as TDataSource).State in [dsBrowse];
+    BttnFECHAR.Enabled := (Sender as TDataSource).State in [dsBrowse];
+
+    GroupBox2.Enabled := (Sender as TDataSource).State in [dsEdit, dsInsert];
+end;
+
+procedure TFrmProdutor.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+    Action := CaFree;
+end;
+
+procedure TFrmProdutor.FormCreate(Sender: TObject);
+begin
+
+    //Form no centro da tela
+    Left := (GetSystemMetrics(SM_CXSCREEN) - Width - 2) div 2;
+    Top := (GetSystemMetrics(SM_CYSCREEN) - Height - 30) div 2;
+
+    //carregar as imagens de layout em (C:\Projeto\Interface\cabecalho.bmp )
+    try
+        Image1.Picture.LoadFromFile('C:\Projeto\Interface\cabecalho.bmp');
+        Image2.Picture.LoadFromFile('C:\Projeto\Interface\rodape.bmp');
+    except
+        Application.MessageBox('Plataforma de interface desatualizada', 'Aviso!', MB_ICONEXCLAMATION + MB_OK);
+    end;
+
+    ClntDtStPRODUTOR.Open;
+    FrmPrincipal.SQLQryAUX.Open;
+
+end;
+
+end.
+

@@ -1,0 +1,120 @@
+unit UntNegPesqProduto;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Data.FMTBcd, Datasnap.DBClient,
+  Datasnap.Provider, Data.SqlExpr, Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls,
+  Vcl.ExtCtrls;
+
+type
+  TFrmNegPesqProduto = class(TForm)
+    Image1: TImage;
+    Image2: TImage;
+    Panel1: TPanel;
+    Label5: TLabel;
+    Label1: TLabel;
+    Label2: TLabel;
+    EdtNOME: TEdit;
+    BttnLOCALIZARPROD: TButton;
+    EdtCNPJ: TEdit;
+    DBGrid1: TDBGrid;
+    SQLQryPROD: TSQLQuery;
+    DtStPrvdrPROD: TDataSetProvider;
+    ClntDtStPROD: TClientDataSet;
+    DtSrcPROD: TDataSource;
+    ClntDtStPRODCODPROD: TFMTBCDField;
+    ClntDtStPRODNOME: TWideStringField;
+    ClntDtStPRODPRECO: TFMTBCDField;
+    ClntDtStPRODDTCADASTRO: TSQLTimeStampField;
+    ClntDtStPRODDTULTALTER: TSQLTimeStampField;
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure BttnLOCALIZARPRODClick(Sender: TObject);
+    procedure DBGrid1DblClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmNegPesqProduto: TFrmNegPesqProduto;
+
+implementation
+
+uses
+  Unt0002, UntPrincipal, UntNegociacao;
+
+{$R *.dfm}
+
+procedure TFrmNegPesqProduto.BttnLOCALIZARPRODClick(Sender: TObject);
+begin
+    ClntDtStPROD.Close;
+
+    with SQLQryPROD do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT CODPROD, NOME, PRECO, DTCADASTRO, DTULTALTER');
+        SQL.Add('  FROM PRODUTO ');
+        SQL.Add(' WHERE CODPROD <> 0 ');
+
+        if EdtNOME.Text <> '' then
+        begin
+            SQL.Add('  AND NOME LIKE :NOME');
+            Params.ParamByName('NOME').AsString := EdtNOME.Text + '%';
+        end;
+
+        if EdtCNPJ.Text <> '' then
+        begin
+            SQL.Add('  AND REPLACE(REPLACE(REPLACE(CPFCNPJ,''.'',''''),''/'',''''),''-'','''') = :CPFCNPJ');
+            Params.ParamByName('CPFCNPJ').AsString := FrmPrincipal.RemoveChars(EdtCNPJ.Text, './-');
+        end;
+
+        SQL.Add(' ORDER BY NOME');
+
+    end;
+
+    ClntDtStPROD.Open;
+end;
+
+procedure TFrmNegPesqProduto.DBGrid1DblClick(Sender: TObject);
+begin
+
+    if ClntDtStPROD.RecordCount = 0 then
+        Abort;
+
+    FrmNegociacao.CrrncyEdtCOD_PROD.Value := ClntDtStPRODCODPROD.AsCurrency;
+    FrmNegociacao.EdtNOME_PRODUTO.Text := ClntDtStPRODNOME.AsString;
+    FrmNegociacao.CrrncyEdtPRECO.Value := ClntDtStPRODPRECO.AsCurrency;
+    FrmNegociacao.CrrncyEdtQTDE.Value := 1;
+    FrmNegociacao.CrrncyEdtQTDE.SetFocus;
+
+    Close;
+end;
+
+procedure TFrmNegPesqProduto.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+    Action := CaFree;
+end;
+
+procedure TFrmNegPesqProduto.FormCreate(Sender: TObject);
+begin
+    //Form no centro da tela
+    Left := (GetSystemMetrics(SM_CXSCREEN) - Width - 2) div 2;
+    Top := (GetSystemMetrics(SM_CYSCREEN) - Height - 30) div 2;
+
+    //carregar as imagens de layout em (C:\Projeto\src\Interface\cabecalho.bmp )
+    try
+        Image1.Picture.LoadFromFile('C:\Projeto\src\Interface\cabecalho.bmp');
+        Image2.Picture.LoadFromFile('C:\Projeto\src\Interface\rodape.bmp');
+    except
+        Application.MessageBox('Plataforma de interface desatualizada', 'Aviso!', MB_ICONEXCLAMATION + MB_OK);
+    end;
+
+end;
+
+end.

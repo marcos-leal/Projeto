@@ -1,0 +1,119 @@
+unit UntPESQ_DISTRIB;
+
+interface
+
+uses
+    Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+    System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+    Vcl.ExtCtrls, Data.DB, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids;
+
+type
+    TFrmPESQ_DISTRIB = class(TForm)
+        Image1: TImage;
+        Image2: TImage;
+        Panel1: TPanel;
+        DBGrid1: TDBGrid;
+        Label5: TLabel;
+        EdtNOME: TEdit;
+        BttnLOCALIZAR: TButton;
+    EdtCNPJ: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+        procedure DBGrid1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure BttnLOCALIZARClick(Sender: TObject);
+    procedure DBGrid1DblClick(Sender: TObject);
+    private
+    { Private declarations }
+    public
+    { Public declarations }
+    end;
+
+var
+    FrmPESQ_DISTRIB: TFrmPESQ_DISTRIB;
+
+implementation
+
+uses
+    UntLimiteCreditoProdutor, UntPrincipal;
+
+{$R *.dfm}
+
+procedure TFrmPESQ_DISTRIB.BttnLOCALIZARClick(Sender: TObject);
+begin
+
+    FrmLimiteCreditoProdutor.ClntDtStPESQ_DISTRIB.Close;
+
+    with FrmLimiteCreditoProdutor.SQLQryPESQ_DISTRIB do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT CODDISTRIB, CNPJ, NOME, DTCADASTRO, DTULTALTER');
+        SQL.Add('  FROM DISTRIBUIDOR');
+        SQL.Add(' WHERE CODDISTRIB <> 0 ');
+
+        if EdtNOME.Text <> '' then
+        begin
+            SQL.Add('  AND NOME LIKE :NOME');
+            Params.ParamByName('NOME').AsString := EdtNOME.Text + '%';
+        end;
+
+        if EdtCNPJ.Text <> '' then
+        begin
+            SQL.Add('  AND REPLACE(REPLACE(REPLACE(CNPJ,''.'',''''),''/'',''''),''-'','''') = :CNPJ');
+            Params.ParamByName('CNPJ').AsString := FrmPrincipal.RemoveChars(EdtCNPJ.Text, './-');
+        end;
+
+        SQL.Add(' ORDER BY NOME');
+
+    end;
+
+    FrmLimiteCreditoProdutor.ClntDtStPESQ_DISTRIB.Open;
+
+end;
+
+procedure TFrmPESQ_DISTRIB.DBGrid1DblClick(Sender: TObject);
+begin
+
+    if FrmLimiteCreditoProdutor.ClntDtStPESQ_DISTRIB.RecordCount = 0 then
+        Abort;
+
+    FrmLimiteCreditoProdutor.CrrncyEdtCOD_DISTRIB.Value := FrmLimiteCreditoProdutor.ClntDtStPESQ_DISTRIBCODDISTRIB.AsCurrency;
+    FrmLimiteCreditoProdutor.EdtNOME_DISTRIB.Text := FrmLimiteCreditoProdutor.ClntDtStPESQ_DISTRIBNOME.AsString;
+    FrmLimiteCreditoProdutor.EdtCNPJ_DISTRIB.Text := FrmLimiteCreditoProdutor.ClntDtStPESQ_DISTRIBCNPJ.AsString;
+
+    Close;
+end;
+
+procedure TFrmPESQ_DISTRIB.DBGrid1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+    if (ssCtrl in Shift) and (Key = VK_DELETE) then
+        Key := 0;
+
+end;
+
+procedure TFrmPESQ_DISTRIB.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+    Action := CaFree;
+end;
+
+procedure TFrmPESQ_DISTRIB.FormCreate(Sender: TObject);
+begin
+    //Form no centro da tela
+    Left := (GetSystemMetrics(SM_CXSCREEN) - Width - 2) div 2;
+    Top := (GetSystemMetrics(SM_CYSCREEN) - Height - 30) div 2;
+
+    //carregar as imagens de layout em (C:\Projeto\Interface\cabecalho.bmp )
+    try
+        Image1.Picture.LoadFromFile('C:\Projeto\src\Interface\cabecalho.bmp');
+        Image2.Picture.LoadFromFile('C:\Projeto\src\Interface\rodape.bmp');
+    except
+        Application.MessageBox('Plataforma de interface desatualizada', 'Aviso!', MB_ICONEXCLAMATION + MB_OK);
+    end;
+
+    FrmLimiteCreditoProdutor.ClntDtStPESQ_DISTRIB.Close;
+end;
+
+end.
+

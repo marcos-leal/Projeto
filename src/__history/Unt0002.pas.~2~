@@ -1,0 +1,26 @@
+unit Unt0002;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DBXOracle, Data.DB, Data.SqlExpr;
+
+type
+  TDtM0001 = class(TDataModule)
+    sqcORALOGIN: TSQLConnection;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DtM0001: TDtM0001;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+end.

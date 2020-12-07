@@ -1,0 +1,362 @@
+object FrmProdutor: TFrmProdutor
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = 'FrmProdutor'
+  ClientHeight = 470
+  ClientWidth = 814
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  ShowHint = True
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Image1: TImage
+    Left = 0
+    Top = 0
+    Width = 814
+    Height = 41
+    Align = alTop
+    AutoSize = True
+    ExplicitTop = -4
+  end
+  object Image2: TImage
+    Left = 0
+    Top = 442
+    Width = 814
+    Height = 28
+    Align = alBottom
+    AutoSize = True
+    ExplicitLeft = -211
+    ExplicitTop = 271
+    ExplicitWidth = 846
+  end
+  object Panel1: TPanel
+    Left = 0
+    Top = 41
+    Width = 814
+    Height = 401
+    Align = alClient
+    AutoSize = True
+    TabOrder = 0
+    object GroupBox1: TGroupBox
+      Left = 6
+      Top = 2
+      Width = 800
+      Height = 67
+      TabOrder = 0
+      object BttnNOVO: TButton
+        Left = 28
+        Top = 28
+        Width = 90
+        Height = 25
+        Caption = 'Novo'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        OnClick = BttnNOVOClick
+      end
+      object BttnLISTARPRODUTOR: TButton
+        Left = 142
+        Top = 28
+        Width = 110
+        Height = 25
+        Hint = 
+          'Lista de produtor para pesquisa, edi'#231#227'o e informar limite de cr'#233 +
+          'dito para distribuidor.'
+        Caption = 'Listar Produtor'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 1
+        OnClick = BttnLISTARPRODUTORClick
+      end
+      object BttnALTERAR: TButton
+        Left = 272
+        Top = 28
+        Width = 90
+        Height = 25
+        Caption = 'Alterar'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 2
+        OnClick = BttnALTERARClick
+      end
+    end
+    object GroupBox2: TGroupBox
+      Left = 6
+      Top = 75
+      Width = 800
+      Height = 281
+      TabOrder = 1
+      object Label1: TLabel
+        Left = 28
+        Top = 15
+        Width = 33
+        Height = 13
+        Caption = 'C'#243'digo'
+        FocusControl = DBEdit1
+        Transparent = True
+      end
+      object Label4: TLabel
+        Left = 28
+        Top = 58
+        Width = 62
+        Height = 13
+        Caption = 'Dt. Cadastro'
+      end
+      object Label5: TLabel
+        Left = 124
+        Top = 58
+        Width = 84
+        Height = 13
+        Caption = 'Dt. Ult. Altera'#231#227'o'
+      end
+      object Label2: TLabel
+        Left = 124
+        Top = 15
+        Width = 42
+        Height = 13
+        Caption = 'Produtor'
+        FocusControl = DBEdit2
+        Transparent = True
+      end
+      object Label3: TLabel
+        Left = 464
+        Top = 15
+        Width = 48
+        Height = 13
+        Caption = 'CPF/CNPJ'
+        FocusControl = DBEdit3
+        Transparent = True
+      end
+      object DBEdit1: TDBEdit
+        Left = 28
+        Top = 29
+        Width = 88
+        Height = 21
+        TabStop = False
+        CharCase = ecUpperCase
+        Color = 16702938
+        Ctl3D = True
+        DataField = 'CODPRODUTOR'
+        DataSource = DtSrcPRODUTOR
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Verdana'
+        Font.Style = []
+        ParentCtl3D = False
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 0
+      end
+      object DBEdit4: TDBEdit
+        Left = 28
+        Top = 73
+        Width = 88
+        Height = 21
+        TabStop = False
+        CharCase = ecUpperCase
+        Color = 16702938
+        Ctl3D = True
+        DataField = 'DTCADASTRO'
+        DataSource = DtSrcPRODUTOR
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Verdana'
+        Font.Style = []
+        ParentCtl3D = False
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 3
+      end
+      object DBEdit5: TDBEdit
+        Left = 124
+        Top = 73
+        Width = 88
+        Height = 21
+        TabStop = False
+        CharCase = ecUpperCase
+        Color = 16702938
+        Ctl3D = True
+        DataField = 'DTULTALTER'
+        DataSource = DtSrcPRODUTOR
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Verdana'
+        Font.Style = []
+        ParentCtl3D = False
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 4
+      end
+      object DBEdit2: TDBEdit
+        Left = 124
+        Top = 29
+        Width = 332
+        Height = 21
+        AutoSelect = False
+        CharCase = ecUpperCase
+        Ctl3D = True
+        DataField = 'NOME'
+        DataSource = DtSrcPRODUTOR
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Verdana'
+        Font.Style = []
+        ParentCtl3D = False
+        ParentFont = False
+        TabOrder = 1
+      end
+      object DBEdit3: TDBEdit
+        Left = 464
+        Top = 29
+        Width = 162
+        Height = 21
+        CharCase = ecUpperCase
+        Ctl3D = True
+        DataField = 'CPFCNPJ'
+        DataSource = DtSrcPRODUTOR
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Verdana'
+        Font.Style = []
+        ParentCtl3D = False
+        ParentFont = False
+        TabOrder = 2
+        OnExit = DBEdit3Exit
+      end
+    end
+    object GroupBox3: TGroupBox
+      Left = 6
+      Top = 360
+      Width = 800
+      Height = 40
+      TabOrder = 2
+      object BttnFINALIZAR: TButton
+        Left = 26
+        Top = 10
+        Width = 90
+        Height = 25
+        Caption = 'Finalizar'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        OnClick = BttnFINALIZARClick
+      end
+      object BttnCANCELAR: TButton
+        Left = 186
+        Top = 10
+        Width = 90
+        Height = 25
+        Caption = 'Cancelar'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 1
+        OnClick = BttnCANCELARClick
+      end
+      object BttnFECHAR: TButton
+        Left = 698
+        Top = 10
+        Width = 90
+        Height = 25
+        Caption = 'Fechar'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 2
+        OnClick = BttnFECHARClick
+      end
+    end
+  end
+  object SQLQryPRODUTOR: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      'SELECT CODPRODUTOR, CPFCNPJ, NOME, DTCADASTRO, DTULTALTER'
+      '  FROM PRODUTOR'
+      ' WHERE CODPRODUTOR = 0 ')
+    SQLConnection = DtM0002.sqcORALOGIN
+    Left = 648
+    Top = 232
+  end
+  object DtStPrvdrPRODUTOR: TDataSetProvider
+    DataSet = SQLQryPRODUTOR
+    Left = 656
+    Top = 240
+  end
+  object ClntDtStPRODUTOR: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DtStPrvdrPRODUTOR'
+    AfterPost = ClntDtStPRODUTORAfterPost
+    Left = 664
+    Top = 248
+    object ClntDtStPRODUTORCODPRODUTOR: TFMTBCDField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'CODPRODUTOR'
+      Required = True
+      Precision = 10
+      Size = 0
+    end
+    object ClntDtStPRODUTORCPFCNPJ: TWideStringField
+      DisplayLabel = 'CPF/CNPJ'
+      FieldName = 'CPFCNPJ'
+      Required = True
+      Size = 18
+    end
+    object ClntDtStPRODUTORNOME: TWideStringField
+      DisplayLabel = 'Produtor'
+      FieldName = 'NOME'
+      Size = 60
+    end
+    object ClntDtStPRODUTORDTCADASTRO: TSQLTimeStampField
+      DisplayLabel = 'Dt. Cadastro'
+      FieldName = 'DTCADASTRO'
+    end
+    object ClntDtStPRODUTORDTULTALTER: TSQLTimeStampField
+      DisplayLabel = 'Dt. Ult. Altera'#231#227'o'
+      FieldName = 'DTULTALTER'
+    end
+  end
+  object DtSrcPRODUTOR: TDataSource
+    DataSet = ClntDtStPRODUTOR
+    OnStateChange = DtSrcPRODUTORStateChange
+    Left = 672
+    Top = 256
+  end
+end

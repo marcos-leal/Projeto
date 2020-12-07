@@ -1,0 +1,260 @@
+unit UntListarNegociacao;
+
+interface
+
+uses
+    Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+    System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB,
+    Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls, Vcl.Mask, RxToolEdit, RxCurrEdit,
+    Vcl.ExtCtrls, Data.FMTBcd, Datasnap.DBClient, Datasnap.Provider,
+    Data.SqlExpr, StrUtils;
+
+type
+    TFrmListarNegociacao = class(TForm)
+        Image1: TImage;
+        Panel2: TPanel;
+        SQLQryLISTARNEGOC: TSQLQuery;
+        DtStPrvdrLISTARNEGOC: TDataSetProvider;
+        ClntDtStLISTARNEGOC: TClientDataSet;
+        DtSrcLISTARNEGOC: TDataSource;
+        ClntDtStLISTARNEGOCNUMNEGOC: TFMTBCDField;
+        ClntDtStLISTARNEGOCCODPRODUTOR: TFMTBCDField;
+        ClntDtStLISTARNEGOCPRODUTOR: TWideStringField;
+        ClntDtStLISTARNEGOCCODDISTRIB: TFMTBCDField;
+        ClntDtStLISTARNEGOCDISTRIBUIDOR: TWideStringField;
+        ClntDtStLISTARNEGOCTOTAL: TFMTBCDField;
+        BttnLOCALIZAR: TButton;
+        CrrncyEdtNUMNEGOC: TCurrencyEdit;
+        Label4: TLabel;
+        ClntDtStLISTARNEGOCSTATUS: TWideStringField;
+        SQLQryLISTARPRODUTO: TSQLQuery;
+        CrrncyEdtCODPRODUTOR: TCurrencyEdit;
+        Label1: TLabel;
+        Label5: TLabel;
+        EdtNOMEPRODUTOR: TEdit;
+        Label2: TLabel;
+        CrrncyEdtCODDISTRIB: TCurrencyEdit;
+        Label3: TLabel;
+        EdtNOMEDISTRIB: TEdit;
+        Panel1: TPanel;
+        BttnVERIFICAR: TButton;
+        DBGrid1: TDBGrid;
+        Image2: TImage;
+        procedure FormClose(Sender: TObject; var Action: TCloseAction);
+        procedure FormCreate(Sender: TObject);
+        procedure BttnLOCALIZARClick(Sender: TObject);
+        procedure DBGrid1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+        procedure BttnVERIFICARClick(Sender: TObject);
+        procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    private
+    { Private declarations }
+    public
+    { Public declarations }
+    end;
+
+var
+    FrmListarNegociacao: TFrmListarNegociacao;
+
+implementation
+
+uses
+    Unt0002, UntNegociacao;
+
+{$R *.dfm}
+
+procedure TFrmListarNegociacao.BttnLOCALIZARClick(Sender: TObject);
+begin
+
+    ClntDtStLISTARNEGOC.Close;
+
+    with SQLQryLISTARNEGOC do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT N.NUMNEGOC, N.CODPRODUTOR, P.NOME AS PRODUTOR, N.CODDISTRIB, D.NOME AS DISTRIBUIDOR, SUM(N.PRECO * N.QT) AS TOTAL, ');
+        SQL.Add('       DECODE(N.STATUS,''P'', ''Pendente'', ''A'',''Aprovado'',''S'',''Concluido'',''C'',''Concelado'') AS STATUS    ');
+        SQL.Add('  FROM NEGOCIACAO N, PRODUTOR P, DISTRIBUIDOR D');
+        SQL.Add(' WHERE N.CODPRODUTOR = P.CODPRODUTOR');
+        SQL.Add('   AND N.CODDISTRIB = D.CODDISTRIB  ');
+
+        if CrrncyEdtNUMNEGOC.Value <> 0 then
+        begin
+            SQL.Add('   AND N.NUMNEGOC = :NUMNEGOC ');
+            Params.ParamByName('NUMNEGOC').AsBCD := CrrncyEdtNUMNEGOC.Value;
+        end;
+
+        if CrrncyEdtCODPRODUTOR.Value <> 0 then
+        begin
+            SQL.Add('   AND N.CODPRODUTOR = :CODPRODUTOR ');
+            Params.ParamByName('CODPRODUTOR').AsBCD := CrrncyEdtCODPRODUTOR.Value;
+        end;
+
+        if EdtNOMEPRODUTOR.Text <> '' then
+        begin
+            SQL.Add('  AND P.NOME LIKE :NOME');
+            Params.ParamByName('NOME').AsString := EdtNOMEPRODUTOR.Text + '%';
+        end;
+
+        if CrrncyEdtCODDISTRIB.Value <> 0 then
+        begin
+            SQL.Add('   AND N.CODDISTRIB = :CODDISTRIB ');
+            Params.ParamByName('CODDISTRIB').AsBCD := CrrncyEdtCODDISTRIB.Value;
+        end;
+
+        if EdtNOMEDISTRIB.Text <> '' then
+        begin
+            SQL.Add('  AND D.NOME LIKE :NOME');
+            Params.ParamByName('NOME').AsString := EdtNOMEDISTRIB.Text + '%';
+        end;
+
+        SQL.Add(' GROUP BY N.NUMNEGOC, N.CODPRODUTOR, P.NOME, N.CODDISTRIB, D.NOME, N.STATUS   ');
+        SQL.Add(' ORDER BY N.NUMNEGOC, N.CODPRODUTOR, N.CODDISTRIB, N.STATUS   ');
+
+    end;
+
+    ClntDtStLISTARNEGOC.Open;
+
+end;
+
+procedure TFrmListarNegociacao.BttnVERIFICARClick(Sender: TObject);
+begin
+
+    if ClntDtStLISTARNEGOC.RecordCount = 0 then
+        Abort;
+
+    if (ClntDtStLISTARNEGOCSTATUS.AsString = 'Concluido') then
+    begin
+        Application.MessageBox(pchar('Negociação está concluida!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+    end;
+
+    if (ClntDtStLISTARNEGOCSTATUS.AsString = 'Cancelado') then
+    begin
+        Application.MessageBox(pchar('Negociação está cancelada'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+    end;
+
+    with FrmNegociacao do
+    begin
+        //Achando proximo id valido
+        with SQLQryAUX do
+        begin
+            Close;
+            SQL.Clear;
+            SQL.Add('SELECT NEGOCIACAO_DFSEQ.NEXTVAL');
+            SQL.Add('  FROM DUAL');
+            Open;
+        end;
+
+        viNUMNEGOC := SQLQryAUX.FieldByName('NEXTVAL').AsInteger;
+
+        BttnNOVO.Enabled := False;
+        BttnLISTARNEGOCIA.Enabled := False;
+        BttnFECHAR.Enabled := False;
+
+        BttnADD.Enabled := True;
+        BttnREMOVER.Enabled := True;
+        BttnCANCELAR.Enabled := True;
+        BttnFINALIZAR.Enabled := True;
+        GroupBox1.Enabled := False;
+        GroupBox2.Enabled := False;
+        GroupBox3.Enabled := True;
+
+        CrrncyEdtCOD_PRODUTOR.Value := ClntDtStLISTARNEGOCCODPRODUTOR.AsCurrency;
+        CrrncyEdtCOD_PRODUTORExit(Sender);
+        CrrncyEdtCOD_DISTRIB.Value := ClntDtStLISTARNEGOCCODDISTRIB.AsCurrency;
+        CrrncyEdtCOD_DISTRIBExit(Sender);
+    end;
+
+    FrmNegociacao.ClntDtStCDSNEGOC.Open;
+
+    if FrmNegociacao.ClntDtStCDSNEGOC.Active then
+        FrmNegociacao.ClntDtStCDSNEGOC.EmptyDataSet;
+
+    with SQLQryLISTARPRODUTO do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT N.NUMNEGOC, N.CODPROD, PRODUTO.NOME AS PRODUTO, N.SEQ, N.PRECO, N.QT, ');
+        SQL.Add('       DECODE(N.STATUS,''P'', ''Pendente'', ''A'',''AprovadO'',''S'',''Concluido'',''C'',''Concelado'') AS STATUS ');
+        SQL.Add('  FROM NEGOCIACAO N, PRODUTO ');
+        SQL.Add(' WHERE N.CODPROD = PRODUTO.CODPROD');
+        SQL.Add('   AND N.NUMNEGOC = :NUMNEGOC');
+        SQL.Add(' ORDER BY N.SEQ  ');
+        Params.ParamByName('NUMNEGOC').AsBCD := ClntDtStLISTARNEGOCNUMNEGOC.AsCurrency;
+        Open;
+
+        while not eof do
+        begin
+            FrmNegociacao.ClntDtStCDSNEGOC.Append;
+            FrmNegociacao.ClntDtStCDSNEGOCNUMNEGOC.AsCurrency := SQLQryLISTARPRODUTO.FieldByName('NUMNEGOC').AsCurrency;
+            FrmNegociacao.ClntDtStCDSNEGOCCODPROD.AsCurrency := SQLQryLISTARPRODUTO.FieldByName('CODPROD').AsCurrency;
+            FrmNegociacao.ClntDtStCDSNEGOCPRODUTO.AsString := SQLQryLISTARPRODUTO.FieldByName('PRODUTO').AsString;
+            FrmNegociacao.ClntDtStCDSNEGOCSEQ.AsCurrency := SQLQryLISTARPRODUTO.FieldByName('SEQ').AsCurrency;
+            FrmNegociacao.ClntDtStCDSNEGOCPRECO.AsCurrency := SQLQryLISTARPRODUTO.FieldByName('PRECO').AsCurrency;
+            FrmNegociacao.ClntDtStCDSNEGOCQT.AsCurrency := SQLQryLISTARPRODUTO.FieldByName('QT').AsCurrency;
+            FrmNegociacao.ClntDtStCDSNEGOCSTATUS.AsString := SQLQryLISTARPRODUTO.FieldByName('STATUS').AsString;
+            FrmNegociacao.ClntDtStCDSNEGOC.Post;
+            Next;
+        end;
+    end;
+
+    FrmNegociacao.TotalItem;
+
+    FrmNegociacao.viNUMNEGOC_EDICAO := FrmNegociacao.ClntDtStCDSNEGOCNUMNEGOC.AsInteger;
+
+    Close;
+
+end;
+
+procedure TFrmListarNegociacao.DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+
+    if DataCol = 0 then
+    begin
+        case AnsiIndexStr(ClntDtStLISTARNEGOCSTATUS.AsString, ['Pendente', 'Aprovado', 'Concluido', 'Concelado']) of
+            0:
+                TDBGrid(Sender).Canvas.Font.Color := $0080511C;
+            1:
+                TDBGrid(Sender).Canvas.Font.Color := clBlue;
+            2:
+                TDBGrid(Sender).Canvas.Font.Color := clGreen;
+            3:
+                TDBGrid(Sender).Canvas.Font.Color := clRed;
+
+        end;
+    end;
+
+    Dbgrid1.DefaultDrawDataCell(Rect, dbgrid1.columns[datacol].field, State);
+end;
+
+procedure TFrmListarNegociacao.DBGrid1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+    //Não permitr excluir o registro pela grid
+    if (Shift = [ssCtrl]) and (Key = 46) then
+        Key := 0;
+end;
+
+procedure TFrmListarNegociacao.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+    Action := CaFree;
+end;
+
+procedure TFrmListarNegociacao.FormCreate(Sender: TObject);
+begin
+    //Form no centro da tela
+    Left := (GetSystemMetrics(SM_CXSCREEN) - Width - 2) div 2;
+    Top := (GetSystemMetrics(SM_CYSCREEN) - Height - 30) div 2;
+
+    //carregar as imagens de layout em (C:\Projeto\Interface\cabecalho.bmp )
+    try
+        Image1.Picture.LoadFromFile('C:\Projeto\Interface\cabecalho.bmp');
+        Image2.Picture.LoadFromFile('C:\Projeto\Interface\rodape.bmp');
+    except
+        Application.MessageBox('Plataforma de interface desatualizada', 'Aviso!', MB_ICONEXCLAMATION + MB_OK);
+    end;
+
+end;
+
+end.
+

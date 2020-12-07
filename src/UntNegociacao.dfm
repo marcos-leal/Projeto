@@ -1,0 +1,673 @@
+object FrmNegociacao: TFrmNegociacao
+  Left = 0
+  Top = 0
+  Caption = 'FrmNegociacao'
+  ClientHeight = 566
+  ClientWidth = 899
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  KeyPreview = True
+  OldCreateOrder = False
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 899
+    Height = 286
+    Align = alTop
+    TabOrder = 0
+    object Image1: TImage
+      Left = 1
+      Top = 1
+      Width = 897
+      Height = 41
+      Align = alTop
+      AutoSize = True
+      ExplicitLeft = 2
+      ExplicitTop = 9
+    end
+    object GroupBox2: TGroupBox
+      Left = 9
+      Top = 153
+      Width = 877
+      Height = 63
+      Caption = 'Distribuidor'
+      TabOrder = 3
+      object Label4: TLabel
+        Left = 6
+        Top = 19
+        Width = 33
+        Height = 13
+        Caption = 'C'#243'digo'
+        Transparent = True
+      end
+      object Label5: TLabel
+        Left = 109
+        Top = 19
+        Width = 54
+        Height = 13
+        Caption = 'Distribuidor'
+        Transparent = True
+      end
+      object Label6: TLabel
+        Left = 581
+        Top = 19
+        Width = 72
+        Height = 13
+        Caption = 'Vl. Lim. Cr'#233'dito'
+        Transparent = True
+      end
+      object Label7: TLabel
+        Left = 450
+        Top = 19
+        Width = 25
+        Height = 13
+        Caption = 'CNPJ'
+        Transparent = True
+      end
+      object SpeedButton1: TSpeedButton
+        Left = 81
+        Top = 32
+        Width = 23
+        Height = 22
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          0400000000000001000000000000000000001000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00F88FFFFFFFFF
+          FFFFF88FFFFFFFFFFFFF8777FFFFFFFFFFFF8877FFFFFFFFFFFFF8377FFFFFFF
+          FFFFF8877FFFFFFFFFFFF88377FFFFFFFFFFFF8877FFFFFFFFFFFF88377FFFFF
+          FFFFFFF8877FFFFFFFFFFFF8837888888FFFFFFF8878F7778FFFFFFF888888F8
+          888FFFFFF887888887FFFFFFFF88FFFFFF8FFFFFFF7F888FFF7FFFFFF88F8FFF
+          FF88FFFFFF88888FFF88FFFFF8888FFFFF88FFFFF8F88888FF87FFFFF88888FF
+          FFF8FFFFF78888888887FFFFF88F888FFF88FFFFF88888888887FFFFF88FF888
+          8F88FFFFFF8FF8888888FFFFFF88FF88888FFFFFFF7FF8888F7FFFFFFF888888
+          888FFFFFFFF7F88887FFFFFFFFFF88888FFFFFFFFFFF87777FFF}
+        NumGlyphs = 2
+        OnClick = SpeedButton1Click
+      end
+      object Label14: TLabel
+        Left = 779
+        Top = 19
+        Width = 91
+        Height = 13
+        Caption = 'Vl. Lim. Cr'#233'd. Disp.'
+        Transparent = True
+      end
+      object Label15: TLabel
+        Left = 682
+        Top = 19
+        Width = 72
+        Height = 13
+        Caption = 'Vl. Util. Cr'#233'dito'
+        Transparent = True
+      end
+      object CrrncyEdtCOD_DISTRIB: TCurrencyEdit
+        Left = 6
+        Top = 33
+        Width = 69
+        Height = 21
+        DisplayFormat = '0'
+        TabOrder = 0
+        OnChange = CrrncyEdtCOD_DISTRIBChange
+        OnExit = CrrncyEdtCOD_DISTRIBExit
+      end
+      object EdtNOME_DISTRIB: TEdit
+        Left = 109
+        Top = 33
+        Width = 335
+        Height = 21
+        CharCase = ecUpperCase
+        Color = 16702938
+        Ctl3D = True
+        ParentCtl3D = False
+        ReadOnly = True
+        TabOrder = 1
+      end
+      object EdtCNPJ_DISTRIB: TEdit
+        Left = 450
+        Top = 33
+        Width = 124
+        Height = 21
+        CharCase = ecUpperCase
+        Color = 16702938
+        Ctl3D = True
+        ParentCtl3D = False
+        ReadOnly = True
+        TabOrder = 2
+      end
+      object CrrncyEdtLIMITECRED: TCurrencyEdit
+        Left = 779
+        Top = 33
+        Width = 91
+        Height = 21
+        Color = 16702938
+        DisplayFormat = ',0.00'
+        ReadOnly = True
+        TabOrder = 5
+      end
+      object CrrncyEdtLIMITECREDITO: TCurrencyEdit
+        Left = 581
+        Top = 33
+        Width = 91
+        Height = 21
+        Color = 16702938
+        DisplayFormat = ',0.00'
+        ReadOnly = True
+        TabOrder = 3
+      end
+      object CrrncyEdtLIMITECREDUTILIZ: TCurrencyEdit
+        Left = 680
+        Top = 33
+        Width = 91
+        Height = 21
+        Color = 16702938
+        DisplayFormat = ',0.00'
+        ReadOnly = True
+        TabOrder = 4
+      end
+    end
+    object GroupBox1: TGroupBox
+      Left = 9
+      Top = 88
+      Width = 877
+      Height = 65
+      Caption = 'Produtor'
+      TabOrder = 2
+      object Label1: TLabel
+        Left = 6
+        Top = 17
+        Width = 33
+        Height = 13
+        Caption = 'C'#243'digo'
+        Transparent = True
+      end
+      object Label2: TLabel
+        Left = 109
+        Top = 17
+        Width = 42
+        Height = 13
+        Caption = 'Produtor'
+        Transparent = True
+      end
+      object Label8: TLabel
+        Left = 450
+        Top = 18
+        Width = 48
+        Height = 13
+        Caption = 'CPF/CNPJ'
+        Transparent = True
+      end
+      object SpeedButton2: TSpeedButton
+        Left = 81
+        Top = 33
+        Width = 23
+        Height = 22
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          0400000000000001000000000000000000001000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00F88FFFFFFFFF
+          FFFFF88FFFFFFFFFFFFF8777FFFFFFFFFFFF8877FFFFFFFFFFFFF8377FFFFFFF
+          FFFFF8877FFFFFFFFFFFF88377FFFFFFFFFFFF8877FFFFFFFFFFFF88377FFFFF
+          FFFFFFF8877FFFFFFFFFFFF8837888888FFFFFFF8878F7778FFFFFFF888888F8
+          888FFFFFF887888887FFFFFFFF88FFFFFF8FFFFFFF7F888FFF7FFFFFF88F8FFF
+          FF88FFFFFF88888FFF88FFFFF8888FFFFF88FFFFF8F88888FF87FFFFF88888FF
+          FFF8FFFFF78888888887FFFFF88F888FFF88FFFFF88888888887FFFFF88FF888
+          8F88FFFFFF8FF8888888FFFFFF88FF88888FFFFFFF7FF8888F7FFFFFFF888888
+          888FFFFFFFF7F88887FFFFFFFFFF88888FFFFFFFFFFF87777FFF}
+        NumGlyphs = 2
+        OnClick = SpeedButton2Click
+      end
+      object CrrncyEdtCOD_PRODUTOR: TCurrencyEdit
+        Left = 6
+        Top = 33
+        Width = 69
+        Height = 21
+        DisplayFormat = '0'
+        TabOrder = 0
+        OnChange = CrrncyEdtCOD_PRODUTORChange
+        OnExit = CrrncyEdtCOD_PRODUTORExit
+      end
+      object EdtNOME_PRODUTOR: TEdit
+        Left = 109
+        Top = 33
+        Width = 335
+        Height = 21
+        CharCase = ecUpperCase
+        Color = 16702938
+        Ctl3D = True
+        ParentCtl3D = False
+        ReadOnly = True
+        TabOrder = 1
+      end
+      object EdtCPFCNPJ_PRODUTOR: TEdit
+        Left = 450
+        Top = 33
+        Width = 124
+        Height = 21
+        CharCase = ecUpperCase
+        Color = 16702938
+        Ctl3D = True
+        ParentCtl3D = False
+        ReadOnly = True
+        TabOrder = 2
+      end
+    end
+    object GroupBox3: TGroupBox
+      Left = 9
+      Top = 216
+      Width = 877
+      Height = 64
+      Caption = 'Produto'
+      TabOrder = 4
+      object Label3: TLabel
+        Left = 6
+        Top = 17
+        Width = 33
+        Height = 13
+        Caption = 'C'#243'digo'
+        Transparent = True
+      end
+      object Label9: TLabel
+        Left = 109
+        Top = 17
+        Width = 38
+        Height = 13
+        Caption = 'Produto'
+        Transparent = True
+      end
+      object Label10: TLabel
+        Left = 450
+        Top = 17
+        Width = 27
+        Height = 13
+        Caption = 'Pre'#231'o'
+        Transparent = True
+      end
+      object Label11: TLabel
+        Left = 541
+        Top = 17
+        Width = 28
+        Height = 13
+        Caption = 'Qtde.'
+        Transparent = True
+      end
+      object Label12: TLabel
+        Left = 632
+        Top = 17
+        Width = 40
+        Height = 13
+        Caption = 'Subtotal'
+        Transparent = True
+      end
+      object SpeedButton3: TSpeedButton
+        Left = 81
+        Top = 31
+        Width = 23
+        Height = 22
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          0400000000000001000000000000000000001000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00F88FFFFFFFFF
+          FFFFF88FFFFFFFFFFFFF8777FFFFFFFFFFFF8877FFFFFFFFFFFFF8377FFFFFFF
+          FFFFF8877FFFFFFFFFFFF88377FFFFFFFFFFFF8877FFFFFFFFFFFF88377FFFFF
+          FFFFFFF8877FFFFFFFFFFFF8837888888FFFFFFF8878F7778FFFFFFF888888F8
+          888FFFFFF887888887FFFFFFFF88FFFFFF8FFFFFFF7F888FFF7FFFFFF88F8FFF
+          FF88FFFFFF88888FFF88FFFFF8888FFFFF88FFFFF8F88888FF87FFFFF88888FF
+          FFF8FFFFF78888888887FFFFF88F888FFF88FFFFF88888888887FFFFF88FF888
+          8F88FFFFFF8FF8888888FFFFFF88FF88888FFFFFFF7FF8888F7FFFFFFF888888
+          888FFFFFFFF7F88887FFFFFFFFFF88888FFFFFFFFFFF87777FFF}
+        NumGlyphs = 2
+        OnClick = SpeedButton3Click
+      end
+      object CrrncyEdtCOD_PROD: TCurrencyEdit
+        Left = 6
+        Top = 32
+        Width = 69
+        Height = 21
+        DisplayFormat = '0'
+        TabOrder = 0
+        OnChange = CrrncyEdtCOD_PRODChange
+        OnExit = CrrncyEdtCOD_PRODExit
+      end
+      object CrrncyEdtQTDE: TCurrencyEdit
+        Left = 541
+        Top = 33
+        Width = 86
+        Height = 21
+        DisplayFormat = ',0.00'
+        TabOrder = 3
+        OnChange = CrrncyEdtQTDEChange
+        OnExit = CrrncyEdtQTDEExit
+      end
+      object CrrncyEdtSUBTOTAL: TCurrencyEdit
+        Left = 632
+        Top = 33
+        Width = 86
+        Height = 21
+        Color = 16702938
+        DisplayFormat = ',0.00'
+        ReadOnly = True
+        TabOrder = 4
+      end
+      object BttnADD: TButton
+        Left = 724
+        Top = 33
+        Width = 68
+        Height = 25
+        Caption = '&Adicionar'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 5
+        OnClick = BttnADDClick
+      end
+      object EdtNOME_PRODUTO: TEdit
+        Left = 109
+        Top = 33
+        Width = 335
+        Height = 21
+        CharCase = ecUpperCase
+        Color = 16702938
+        Ctl3D = True
+        ParentCtl3D = False
+        ReadOnly = True
+        TabOrder = 1
+      end
+      object CrrncyEdtPRECO: TCurrencyEdit
+        Left = 449
+        Top = 33
+        Width = 86
+        Height = 21
+        Color = 16702938
+        DisplayFormat = ',0.00'
+        ReadOnly = True
+        TabOrder = 2
+      end
+      object BttnREMOVER: TButton
+        Left = 802
+        Top = 33
+        Width = 68
+        Height = 25
+        Caption = '&Remover'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 6
+        OnClick = BttnREMOVERClick
+      end
+    end
+    object BttnNOVO: TButton
+      Left = 9
+      Top = 57
+      Width = 100
+      Height = 25
+      Caption = '&Novo'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      OnClick = BttnNOVOClick
+    end
+    object BttnLISTARNEGOCIA: TButton
+      Left = 142
+      Top = 57
+      Width = 110
+      Height = 25
+      Caption = 'Listar Negocia'#231#227'o'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      OnClick = BttnLISTARNEGOCIAClick
+    end
+  end
+  object Panel3: TPanel
+    Left = 0
+    Top = 496
+    Width = 899
+    Height = 70
+    Align = alBottom
+    TabOrder = 2
+    object Image2: TImage
+      Left = 1
+      Top = 41
+      Width = 897
+      Height = 28
+      Align = alBottom
+      AutoSize = True
+      ExplicitLeft = -149
+      ExplicitTop = 271
+      ExplicitWidth = 784
+    end
+    object Label13: TLabel
+      Left = 12
+      Top = 2
+      Width = 24
+      Height = 13
+      Caption = 'Total'
+      Transparent = True
+    end
+    object Label16: TLabel
+      Left = 103
+      Top = 2
+      Width = 31
+      Height = 13
+      Caption = 'Status'
+      Transparent = True
+    end
+    object BttnFINALIZAR: TButton
+      Left = 443
+      Top = 13
+      Width = 89
+      Height = 25
+      Caption = 'Finalizar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      OnClick = BttnFINALIZARClick
+    end
+    object BttnCANCELAR: TButton
+      Left = 334
+      Top = 13
+      Width = 89
+      Height = 25
+      Caption = 'Cancelar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      OnClick = BttnCANCELARClick
+    end
+    object BttnFECHAR: TButton
+      Left = 790
+      Top = 13
+      Width = 89
+      Height = 25
+      Caption = 'Fechar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 2
+      OnClick = BttnFECHARClick
+    end
+    object CrrncyEdtTOTAL: TCurrencyEdit
+      Left = 12
+      Top = 17
+      Width = 85
+      Height = 21
+      Color = 16702938
+      DisplayFormat = ',0.00'
+      ReadOnly = True
+      TabOrder = 3
+    end
+    object EdtSTATUS: TEdit
+      Left = 104
+      Top = 17
+      Width = 85
+      Height = 21
+      Color = 16702938
+      Ctl3D = True
+      ParentCtl3D = False
+      ReadOnly = True
+      TabOrder = 4
+    end
+  end
+  object DBGrid1: TDBGrid
+    Left = 0
+    Top = 286
+    Width = 899
+    Height = 210
+    Align = alClient
+    DataSource = DtSrcCDSNEGOC
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    OnKeyDown = DBGrid1KeyDown
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'NUMNEGOC'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'CODPROD'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'PRODUTO'
+        Width = 348
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'PRECO'
+        Width = 93
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'QT'
+        Width = 95
+        Visible = True
+      end
+      item
+        Color = clGradientActiveCaption
+        Expanded = False
+        FieldName = 'clSUBTOT'
+        Width = 91
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'STATUS'
+        Width = 100
+        Visible = True
+      end>
+  end
+  object SQLQryAUX: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DtM0002.sqcORALOGIN
+    Left = 824
+    Top = 8
+  end
+  object ClntDtStCDSNEGOC: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    OnCalcFields = ClntDtStCDSNEGOCCalcFields
+    Left = 168
+    Top = 344
+    object ClntDtStCDSNEGOCNUMNEGOC: TCurrencyField
+      DisplayLabel = 'N'#250'm. Negoc.'
+      FieldName = 'NUMNEGOC'
+      DisplayFormat = '0'
+    end
+    object ClntDtStCDSNEGOCCODPRODUTOR: TCurrencyField
+      FieldName = 'CODPRODUTOR'
+      DisplayFormat = '0'
+    end
+    object ClntDtStCDSNEGOCCODDISTRIB: TCurrencyField
+      FieldName = 'CODDISTRIB'
+      DisplayFormat = '0'
+    end
+    object ClntDtStCDSNEGOCCODPROD: TCurrencyField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'CODPROD'
+      DisplayFormat = '0'
+    end
+    object ClntDtStCDSNEGOCSEQ: TCurrencyField
+      FieldName = 'SEQ'
+      DisplayFormat = '0'
+    end
+    object ClntDtStCDSNEGOCPRECO: TCurrencyField
+      DisplayLabel = 'Pre'#231'o'
+      FieldName = 'PRECO'
+      DisplayFormat = ',0.00'
+    end
+    object ClntDtStCDSNEGOCQT: TCurrencyField
+      DisplayLabel = 'Qtde.'
+      FieldName = 'QT'
+      DisplayFormat = ',0.00'
+    end
+    object ClntDtStCDSNEGOCPRODUTO: TStringField
+      DisplayLabel = 'Produto'
+      FieldName = 'PRODUTO'
+      Size = 60
+    end
+    object ClntDtStCDSNEGOCclSUBTOT: TCurrencyField
+      DisplayLabel = 'Subtotal'
+      FieldKind = fkInternalCalc
+      FieldName = 'clSUBTOT'
+      DisplayFormat = ',0.00'
+    end
+    object ClntDtStCDSNEGOCSTATUS: TStringField
+      DisplayLabel = 'Status'
+      FieldName = 'STATUS'
+      Size = 10
+    end
+  end
+  object DtSrcCDSNEGOC: TDataSource
+    DataSet = ClntDtStCDSNEGOC
+    Left = 168
+    Top = 400
+  end
+end

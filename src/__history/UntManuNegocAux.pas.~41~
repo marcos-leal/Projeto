@@ -1,0 +1,171 @@
+unit UntManuNegocAux;
+
+interface
+
+uses
+    Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+    System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+    Vcl.StdCtrls, Vcl.ExtCtrls, Data.FMTBcd, Data.DB, Data.SqlExpr, StrUtils;
+
+type
+    TFrmManuNegocAux = class(TForm)
+        Panel1: TPanel;
+        RdGrpSTATUS: TRadioGroup;
+        BttnFECHAR: TButton;
+        Button1: TButton;
+        SQLQryEXEC: TSQLQuery;
+        LblNUMNEGOC: TLabel;
+        SQLQryAUX: TSQLQuery;
+        procedure FormCreate(Sender: TObject);
+        procedure FormClose(Sender: TObject; var Action: TCloseAction);
+        procedure BttnFECHARClick(Sender: TObject);
+        procedure Button1Click(Sender: TObject);
+    private
+    { Private declarations }
+    public
+    { Public declarations }
+    end;
+
+var
+    FrmManuNegocAux: TFrmManuNegocAux;
+
+implementation
+
+uses
+    Unt0002, UntManutNegoc, UntPrincipal;
+
+{$R *.dfm}
+
+procedure TFrmManuNegocAux.BttnFECHARClick(Sender: TObject);
+begin
+    Close;
+end;
+
+procedure TFrmManuNegocAux.Button1Click(Sender: TObject);
+var vbmMARCARREGISTRO : TBookmark;
+begin
+
+    vbmMARCARREGISTRO := FrmManutNegoc.ClntDtStLISTARNEGOC.GetBookmark;
+
+    with SQLQryAUX do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT NUMNEGOC, CODPROD, SEQ, STATUS');
+        SQL.Add('  FROM NEGOCIACAO');
+        SQL.Add(' WHERE NUMNEGOC = :NUMNEGOC ');
+        Params.ParamByName('NUMNEGOC').AsBCD := FrmManutNegoc.ClntDtStLISTARNEGOCNUMNEGOC.AsCurrency;
+        Open;
+
+        while not eof do
+        begin
+
+            try
+                //Início da transação
+                DtM0002.TD.TransactionID := 1;
+                DtM0002.sqcORALOGIN.StartTransaction(DtM0002.TD);
+
+                //Alterando dados
+                with SQLQryEXEC do
+                begin
+                    Close;
+                    SQL.Clear;
+                    SQL.Add('UPDATE NEGOCIACAO SET STATUS = :STATUS, ');
+                    case RdGrpSTATUS.ItemIndex of
+                        0:
+                            begin
+                                SQL.Add('       DTAPROVACAO = TRUNC(SYSDATE)  ');
+                            end;
+
+                        1:
+                            begin
+                                SQL.Add('       DTCONCLUSAO = TRUNC(SYSDATE)  ');
+                            end;
+
+                        2:
+                            begin
+                                SQL.Add('       DTCANCEL = TRUNC(SYSDATE)  ');
+                            end;
+
+                    end;
+
+                    SQL.Add(' WHERE NUMNEGOC = :NUMNEGOC');
+                    SQL.Add('   AND CODPROD = :CODPROD');
+                    SQL.Add('   AND SEQ = :SEQ');
+                    Params.ParamByName('NUMNEGOC').AsBCD := SQLQryAUX.FieldByName('NUMNEGOC').AsCurrency;
+                    Params.ParamByName('CODPROD').AsBCD := SQLQryAUX.FieldByName('CODPROD').AsCurrency;
+                    Params.ParamByName('SEQ').AsBCD := SQLQryAUX.FieldByName('SEQ').AsCurrency;
+
+                    case RdGrpSTATUS.ItemIndex of
+                        0:
+
+                            Params.ParamByName('STATUS').AsString := 'A';
+
+                        1:
+
+                            Params.ParamByName('STATUS').AsString := 'S';
+
+                        2:
+
+                            Params.ParamByName('STATUS').AsString := 'C';
+
+                    end;
+                    ExecSql(False);
+                end;
+
+                //Comitando a transação
+                DtM0002.sqcORALOGIN.Commit(DtM0002.TD);
+            except
+                on E: Exception do
+                begin
+                    //Exceção, desfazendo a transação
+                    DtM0002.sqcORALOGIN.Rollback(DtM0002.TD);
+                    Application.MessageBox(pchar(e.Message), pchar('Validação!'), MB_ICONEXCLAMATION);
+                end;
+            end;
+
+            Next;
+        end;
+    end;
+
+    FrmManutNegoc.BttnLOCALIZARClick(Sender);
+
+    try
+        FrmManutNegoc.ClntDtStLISTARNEGOC.GotoBookmark(vbmMARCARREGISTRO);
+        FrmManutNegoc.ClntDtStLISTARNEGOC.FreeBookmark(vbmMARCARREGISTRO);
+    except
+
+    end;
+
+
+    Close;
+
+end;
+
+procedure TFrmManuNegocAux.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+    Action := CaFree;
+end;
+
+procedure TFrmManuNegocAux.FormCreate(Sender: TObject);
+begin
+    //Form no centro da tela
+    Left := (GetSystemMetrics(SM_CXSCREEN) - Width - 2) div 2;
+    Top := (GetSystemMetrics(SM_CYSCREEN) - Height - 30) div 2;
+
+    LblNUMNEGOC.Caption := 'Número da negociação: ' + FrmManutNegoc.ClntDtStLISTARNEGOCNUMNEGOC.AsString;
+
+    case AnsiIndexStr(FrmManutNegoc.ClntDtStLISTARNEGOCSTATUS.AsString, ['Aprovado', 'Concluido', 'Concelado']) of
+        0:
+            RdGrpSTATUS.ItemIndex := 0;
+        1:
+            RdGrpSTATUS.ItemIndex := 1;
+        2:
+            RdGrpSTATUS.ItemIndex := 2;
+
+    end;
+
+end;
+
+end.
+

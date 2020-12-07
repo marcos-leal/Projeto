@@ -1,0 +1,49 @@
+unit Unt0001;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls;
+
+type
+  TForm1 = class(TForm)
+    Image1: TImage;
+    Image2: TImage;
+    procedure FormCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+uses
+  Unt0002;
+
+{$R *.dfm}
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+
+    //Form no centro da tela
+    Left := (GetSystemMetrics(SM_CXSCREEN) - Width - 2) div 2;
+    Top := (GetSystemMetrics(SM_CYSCREEN) - Height - 30) div 2;
+
+    //carregar as imagens de layout em (C:\Projeto\Interface\cabecalho.bmp )
+    try
+        Image1.Picture.LoadFromFile('C:\Projeto\Interface\cabecalho.bmp');
+        Image2.Picture.LoadFromFile('C:\Projeto\Interface\rodape.bmp');
+    except
+        Application.MessageBox('Plataforma de interface desatualizada', 'Aviso!', MB_ICONEXCLAMATION + mb_ok);
+    end;
+
+    Caption := 'Projeto – Controle de negociação';
+
+end;
+
+end.

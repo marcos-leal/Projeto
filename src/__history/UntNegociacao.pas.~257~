@@ -1,0 +1,880 @@
+unit UntNegociacao;
+
+interface
+
+uses
+    Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+    System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+    Vcl.ExtCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls, Vcl.Mask,
+    RxToolEdit, RxCurrEdit, Vcl.Buttons, Vcl.DBCtrls, Data.FMTBcd,
+    Datasnap.DBClient, Datasnap.Provider, Data.SqlExpr;
+
+type
+    TFrmNegociacao = class(TForm)
+        Panel1: TPanel;
+        Panel3: TPanel;
+        Image2: TImage;
+        Image1: TImage;
+        GroupBox2: TGroupBox;
+        Label4: TLabel;
+        Label5: TLabel;
+        Label6: TLabel;
+        Label7: TLabel;
+        SpeedButton1: TSpeedButton;
+        CrrncyEdtCOD_DISTRIB: TCurrencyEdit;
+        GroupBox1: TGroupBox;
+        Label1: TLabel;
+        Label2: TLabel;
+        Label8: TLabel;
+        SpeedButton2: TSpeedButton;
+        CrrncyEdtCOD_PRODUTOR: TCurrencyEdit;
+        GroupBox3: TGroupBox;
+        Label3: TLabel;
+        Label9: TLabel;
+        Label10: TLabel;
+        CrrncyEdtCOD_PROD: TCurrencyEdit;
+        CrrncyEdtQTDE: TCurrencyEdit;
+        DBGrid1: TDBGrid;
+        BttnFINALIZAR: TButton;
+        Label11: TLabel;
+        CrrncyEdtSUBTOTAL: TCurrencyEdit;
+        Label12: TLabel;
+        BttnADD: TButton;
+        BttnCANCELAR: TButton;
+        BttnFECHAR: TButton;
+        BttnNOVO: TButton;
+        SQLQryAUX: TSQLQuery;
+        EdtNOME_PRODUTOR: TEdit;
+        EdtCPFCNPJ_PRODUTOR: TEdit;
+        EdtNOME_DISTRIB: TEdit;
+        EdtCNPJ_DISTRIB: TEdit;
+        CrrncyEdtLIMITECRED: TCurrencyEdit;
+        EdtNOME_PRODUTO: TEdit;
+        CrrncyEdtPRECO: TCurrencyEdit;
+        SpeedButton3: TSpeedButton;
+        BttnREMOVER: TButton;
+        ClntDtStCDSNEGOC: TClientDataSet;
+        DtSrcCDSNEGOC: TDataSource;
+        ClntDtStCDSNEGOCNUMNEGOC: TCurrencyField;
+        ClntDtStCDSNEGOCCODPRODUTOR: TCurrencyField;
+        ClntDtStCDSNEGOCCODDISTRIB: TCurrencyField;
+        ClntDtStCDSNEGOCCODPROD: TCurrencyField;
+        ClntDtStCDSNEGOCSEQ: TCurrencyField;
+        ClntDtStCDSNEGOCPRECO: TCurrencyField;
+        ClntDtStCDSNEGOCQT: TCurrencyField;
+        ClntDtStCDSNEGOCPRODUTO: TStringField;
+        ClntDtStCDSNEGOCclSUBTOT: TCurrencyField;
+        CrrncyEdtTOTAL: TCurrencyEdit;
+        Label13: TLabel;
+        CrrncyEdtLIMITECREDITO: TCurrencyEdit;
+        CrrncyEdtLIMITECREDUTILIZ: TCurrencyEdit;
+        Label14: TLabel;
+        Label15: TLabel;
+        BttnLISTARNEGOCIA: TButton;
+        ClntDtStCDSNEGOCSTATUS: TStringField;
+        EdtSTATUS: TEdit;
+        Label16: TLabel;
+        procedure FormCreate(Sender: TObject);
+        procedure FormClose(Sender: TObject; var Action: TCloseAction);
+        procedure SpeedButton2Click(Sender: TObject);
+        procedure SpeedButton1Click(Sender: TObject);
+        procedure BttnFECHARClick(Sender: TObject);
+        procedure CrrncyEdtCOD_PRODUTORExit(Sender: TObject);
+        procedure CrrncyEdtCOD_DISTRIBExit(Sender: TObject);
+        procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+        procedure SpeedButton3Click(Sender: TObject);
+        procedure CrrncyEdtCOD_PRODExit(Sender: TObject);
+        procedure CrrncyEdtQTDEExit(Sender: TObject);
+        procedure CrrncyEdtQTDEChange(Sender: TObject);
+        procedure BttnNOVOClick(Sender: TObject);
+        procedure BttnFINALIZARClick(Sender: TObject);
+        procedure BttnCANCELARClick(Sender: TObject);
+        procedure BttnADDClick(Sender: TObject);
+        procedure DBGrid1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+        procedure ClntDtStCDSNEGOCCalcFields(DataSet: TDataSet);
+        procedure BttnREMOVERClick(Sender: TObject);
+        procedure BttnLISTARNEGOCIAClick(Sender: TObject);
+    procedure CrrncyEdtCOD_DISTRIBChange(Sender: TObject);
+    procedure CrrncyEdtCOD_PRODUTORChange(Sender: TObject);
+    procedure CrrncyEdtCOD_PRODChange(Sender: TObject);
+    private
+    { Private declarations }
+        procedure ValidarProdutor;
+        procedure ValidarAdicionar;
+        procedure ValidarAdd;
+        procedure LimparTela;
+        procedure LimiteCredito;
+    public
+    { Public declarations }
+        viNUMNEGOC: Integer;
+        viNUMNEGOC_EDICAO: Integer;
+        procedure TotalItem;
+    end;
+
+var
+    FrmNegociacao: TFrmNegociacao;
+
+implementation
+
+uses
+    Unt0002, UntPrincipal, UntNegPesqProdutor, UntNegPesqDistrib, UntNegPesqProd,
+    UntListarNegociacao, UntNegPesqProduto;
+
+{$R *.dfm}
+
+procedure TFrmNegociacao.BttnADDClick(Sender: TObject);
+begin
+
+    //Validando
+    ValidarAdicionar;
+
+    LimiteCredito;
+
+    //Validar o limite de credito
+    if ((CrrncyEdtTOTAL.Value + (CrrncyEdtPRECO.Value * CrrncyEdtQTDE.Value)) > CrrncyEdtLIMITECRED.Value) then
+    begin
+        Application.MessageBox(pchar('Limite de crédito ultrapassado'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+    end;
+
+    //Inserindo dados
+    ClntDtStCDSNEGOC.Append;
+
+    if viNUMNEGOC_EDICAO <> 0 then
+        ClntDtStCDSNEGOCNUMNEGOC.AsInteger := viNUMNEGOC_EDICAO
+    else
+        ClntDtStCDSNEGOCNUMNEGOC.AsInteger := viNUMNEGOC;
+
+    ClntDtStCDSNEGOCCODPRODUTOR.AsCurrency := CrrncyEdtCOD_PRODUTOR.Value;
+    ClntDtStCDSNEGOCPRODUTO.AsString := EdtNOME_PRODUTO.Text;
+    ClntDtStCDSNEGOCCODDISTRIB.AsCurrency := CrrncyEdtCOD_DISTRIB.Value;
+    ClntDtStCDSNEGOCCODPROD.AsCurrency := CrrncyEdtCOD_PROD.Value;
+    ClntDtStCDSNEGOCQT.AsCurrency := CrrncyEdtQTDE.Value;
+    ClntDtStCDSNEGOCPRECO.AsCurrency := CrrncyEdtPRECO.Value;
+    ClntDtStCDSNEGOCSTATUS.AsString := 'Pendente';
+
+    //Salvando
+    ClntDtStCDSNEGOC.Post;
+
+    //Limpado campos
+    CrrncyEdtCOD_PROD.Value := 0;
+    EdtNOME_PRODUTO.Text := '';
+    CrrncyEdtPRECO.Value := 0;
+    CrrncyEdtQTDE.Value := 0;
+    CrrncyEdtSUBTOTAL.Value := 0;
+
+    TotalItem;
+
+end;
+
+procedure TFrmNegociacao.BttnCANCELARClick(Sender: TObject);
+begin
+
+    if Application.MessageBox(pchar('Confirma cancelamento na negociação?'), pchar('Aviso!'), MB_ICONQUESTION + MB_YESNO + +MB_DEFBUTTON2) = ID_YES then
+        ClntDtStCDSNEGOC.CancelUpdates;
+
+    BttnNOVO.Enabled := True;
+    BttnLISTARNEGOCIA.Enabled := True;
+    BttnFECHAR.Enabled := True;
+
+    BttnADD.Enabled := False;
+    BttnREMOVER.Enabled := False;
+    BttnCANCELAR.Enabled := False;
+    BttnFINALIZAR.Enabled := False;
+    GroupBox1.Enabled := False;
+    GroupBox2.Enabled := False;
+    GroupBox3.Enabled := False;
+
+    LimparTela;
+
+    ClntDtStCDSNEGOC.Close;
+
+end;
+
+procedure TFrmNegociacao.BttnFECHARClick(Sender: TObject);
+begin
+
+    if DtM0002.sqcORALOGIN.InTransaction then
+        Abort;
+
+    Close;
+
+end;
+
+procedure TFrmNegociacao.BttnFINALIZARClick(Sender: TObject);
+var
+    viSEQ: Integer;
+begin
+
+    if ClntDtStCDSNEGOC.RecordCount = 0 then
+        Abort;
+
+     if (CrrncyEdtCOD_PRODUTOR.Value = 0) and (EdtNOME_PRODUTOR.Text = '') then
+     begin
+        Application.MessageBox(pchar('Informe Produtor válido!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+     end;
+
+     if (CrrncyEdtCOD_DISTRIB.Value = 0) and (EdtNOME_DISTRIB.Text = '') then
+     begin
+        Application.MessageBox(pchar('Informe Distribuidor válido!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+     end;
+
+    if ClntDtStCDSNEGOC.RecordCount = 0 then
+    begin
+        Application.MessageBox(pchar('Informe produto(s) para a negociação!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+    end;
+
+    if Application.MessageBox(pchar('Confirma finalizar a negociação?'), pchar('Aviso!'), MB_ICONQUESTION + MB_YESNO + +MB_DEFBUTTON1) = ID_NO then
+        Abort;
+
+    viSEQ := 0;
+
+    try
+        // Início da Transação
+        DtM0002.TD.TransactionID := 1;
+        DtM0002.sqcORALOGIN.StartTransaction(DtM0002.TD);
+
+        with ClntDtStCDSNEGOC do
+        begin
+            DisableControls;
+            First;
+
+            while not eof do
+            begin
+
+                with SQLQryAUX do
+                begin
+                    Close;
+                    SQL.Clear;
+                    SQL.Add('SELECT COUNT(*) AS QT');
+                    SQL.Add('  FROM NEGOCIACAO ');
+                    SQL.Add(' WHERE NUMNEGOC = :NUMNEGOC');
+                    SQL.Add('   AND CODPROD = :CODPROD  ');
+                    SQL.Add('   AND SEQ = :SEQ ');
+                    Params.ParamByName('NUMNEGOC').AsBCD := ClntDtStCDSNEGOCNUMNEGOC.AsCurrency;
+                    Params.ParamByName('CODPROD').AsBCD := ClntDtStCDSNEGOCCODPROD.AsCurrency;
+                    Params.ParamByName('SEQ').AsBCD := ClntDtStCDSNEGOCSEQ.AsCurrency;
+                    Open;
+                end;
+
+                //Inserido dados
+                if SQLQryAUX.FieldByName('QT').AsCurrency = 0 then
+                begin
+                    viSEQ := viSEQ + 1;
+
+                    with SQLQryAUX do
+                    begin
+                        Close;
+                        Sql.Clear;
+                        Sql.Add('INSERT INTO NEGOCIACAO');
+                        Sql.Add('  ( NUMNEGOC, CODPRODUTOR, CODDISTRIB, CODPROD, SEQ, PRECO, QT, STATUS, DTEMISSAO)');
+                        Sql.Add('VALUES');
+                        Sql.Add('  ( :NUMNEGOC, :CODPRODUTOR, :CODDISTRIB, :CODPROD, :SEQ, :PRECO, :QT, ''P'', TRUNC(SYSDATE))');
+                        Params.ParamByName('NUMNEGOC').AsBCD := ClntDtStCDSNEGOCNUMNEGOC.AsCurrency;
+                        Params.ParamByName('CODPRODUTOR').AsBCD := ClntDtStCDSNEGOCCODPRODUTOR.AsCurrency;
+                        Params.ParamByName('CODDISTRIB').AsBCD := ClntDtStCDSNEGOCCODDISTRIB.AsCurrency;
+                        Params.ParamByName('CODPROD').AsBCD := ClntDtStCDSNEGOCCODPROD.AsCurrency;
+                        Params.ParamByName('PRECO').AsBCD := ClntDtStCDSNEGOCPRECO.AsCurrency;
+                        Params.ParamByName('SEQ').AsBCD := viSEQ;
+                        Params.ParamByName('QT').AsBCD := ClntDtStCDSNEGOCQT.AsCurrency;
+                        ExecSQL(False);
+                    end;
+
+                end
+                else  //Editando dados
+                begin
+
+                    with SQLQryAUX do
+                    begin
+                        Close;
+                        SQL.Clear;
+                        SQL.Add('UPDATE NEGOCIACAO SET QT = :QT, PRECO = :PRECO');
+                        SQL.Add('  WHERE NUMNEGOC = :NUMNEGOC');
+                        SQL.Add('    AND CODPROD = :CODPROD  ');
+                        SQL.Add('    AND SEQ = :SEQ ');
+
+                        Params.ParamByName('PRECO').AsBCD := ClntDtStCDSNEGOCPRECO.AsCurrency;
+                        Params.ParamByName('QT').AsBCD := ClntDtStCDSNEGOCQT.AsCurrency;
+
+                        Params.ParamByName('NUMNEGOC').AsBCD := ClntDtStCDSNEGOCNUMNEGOC.AsCurrency;
+                        Params.ParamByName('CODPROD').AsBCD := ClntDtStCDSNEGOCCODPROD.AsCurrency;
+                        Params.ParamByName('SEQ').AsBCD := ClntDtStCDSNEGOCSEQ.AsCurrency;
+                        ExecSQL(False);
+                    end;
+
+                end;
+
+                Next;
+            end;
+
+            EnableControls;
+        end;
+
+        //Comitando a transação
+        DtM0002.sqcORALOGIN.Commit(DtM0002.TD);
+    except
+        on E: Exception do
+        begin
+            //Exceção, desfazendo a transação
+            DtM0002.sqcORALOGIN.Rollback(DtM0002.TD);
+            Application.MessageBox(pchar(e.Message), pchar('Validação!'), MB_ICONEXCLAMATION);
+        end;
+    end;
+
+    BttnNOVO.Enabled := True;
+    BttnLISTARNEGOCIA.Enabled := True;
+    BttnFECHAR.Enabled := True;
+
+    BttnADD.Enabled := False;
+    BttnREMOVER.Enabled := False;
+    BttnCANCELAR.Enabled := False;
+    BttnFINALIZAR.Enabled := False;
+
+    GroupBox1.Enabled := False;
+    GroupBox2.Enabled := False;
+    GroupBox3.Enabled := False;
+
+    LimparTela;
+
+    ClntDtStCDSNEGOC.Close;
+
+    FrmPrincipal.MsgFinal;
+
+end;
+
+procedure TFrmNegociacao.BttnLISTARNEGOCIAClick(Sender: TObject);
+begin
+    viNUMNEGOC_EDICAO := 0;
+
+    try
+        FrmListarNegociacao := TFrmListarNegociacao.Create(Application);
+        FrmListarNegociacao.Caption := 'Listar Negociação';
+        FrmListarNegociacao.ShowModal;
+    finally
+        FrmListarNegociacao.Free;
+    end;
+end;
+
+procedure TFrmNegociacao.BttnNOVOClick(Sender: TObject);
+begin
+
+    viNUMNEGOC := 0;
+    viNUMNEGOC_EDICAO := 0;
+
+    ClntDtStCDSNEGOC.Open;
+
+    if ClntDtStCDSNEGOC.Active then
+        ClntDtStCDSNEGOC.EmptyDataSet;
+
+
+    //Achando proximo id valido
+    with SQLQryAUX do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT NEGOCIACAO_DFSEQ.NEXTVAL');
+        SQL.Add('  FROM DUAL');
+        Open;
+    end;
+
+    viNUMNEGOC := SQLQryAUX.FieldByName('NEXTVAL').AsInteger;
+
+    BttnNOVO.Enabled := False;
+    BttnLISTARNEGOCIA.Enabled := False;
+    BttnFECHAR.Enabled := False;
+
+    BttnADD.Enabled := True;
+    BttnREMOVER.Enabled := True;
+    BttnCANCELAR.Enabled := True;
+    BttnFINALIZAR.Enabled := True;
+    GroupBox1.Enabled := True;
+    GroupBox2.Enabled := True;
+    GroupBox3.Enabled := True;
+
+end;
+
+procedure TFrmNegociacao.BttnREMOVERClick(Sender: TObject);
+begin
+
+    if ClntDtStCDSNEGOC.RecordCount = 0 then
+        Abort;
+
+
+    if Application.MessageBox(pchar('Confirma remoção do produto selecionado na grid?'), pchar('Aviso!'), MB_ICONQUESTION + MB_YESNO + +MB_DEFBUTTON2) = ID_YES then
+    begin
+        if ClntDtStCDSNEGOCSEQ.AsCurrency <> 0 then
+        begin
+
+            try
+                // Início da Transação
+                DtM0002.TD.TransactionID := 1;
+                DtM0002.sqcORALOGIN.StartTransaction(DtM0002.TD);
+
+                with SQLQryAUX do
+                begin
+                    Close;
+                    SQL.Clear;
+                    SQL.Add(' DELETE FROM NEGOCIACAO ');
+                    SQL.Add(' WHERE NUMNEGOC = :NUMNEGOC');
+                    SQL.Add('   AND CODPROD = :CODPROD  ');
+                    SQL.Add('   AND SEQ = :SEQ ');
+                    Params.ParamByName('NUMNEGOC').AsBCD := ClntDtStCDSNEGOCNUMNEGOC.AsCurrency;
+                    Params.ParamByName('CODPROD').AsBCD := ClntDtStCDSNEGOCCODPROD.AsCurrency;
+                    Params.ParamByName('SEQ').AsBCD := ClntDtStCDSNEGOCSEQ.AsCurrency;
+                    ExecSQL(False);
+                end;
+                DtM0002.sqcORALOGIN.Commit(DtM0002.TD);
+            except
+                on E: Exception do
+                begin
+                    DtM0002.sqcORALOGIN.Rollback(DtM0002.TD);
+                    Application.MessageBox(pchar(e.Message), pchar('Validação!'), MB_ICONEXCLAMATION);
+                end;
+            end;
+
+        end;
+
+        ClntDtStCDSNEGOC.Delete;
+        TotalItem;
+
+    end;
+
+end;
+
+procedure TFrmNegociacao.ClntDtStCDSNEGOCCalcFields(DataSet: TDataSet);
+begin
+    ClntDtStCDSNEGOCclSUBTOT.AsCurrency := ClntDtStCDSNEGOCPRECO.AsCurrency * ClntDtStCDSNEGOCQT.AsCurrency;
+end;
+
+procedure TFrmNegociacao.CrrncyEdtCOD_DISTRIBChange(Sender: TObject);
+begin
+
+    try
+        CrrncyEdtCOD_DISTRIBExit(Sender);
+    except
+        ;
+    end;
+
+end;
+
+procedure TFrmNegociacao.CrrncyEdtCOD_DISTRIBExit(Sender: TObject);
+begin
+
+    if CrrncyEdtCOD_PRODUTOR.Value = 0 then
+        Abort;
+
+    EdtNOME_DISTRIB.Text := '';
+    EdtCNPJ_DISTRIB.Text := '';
+    CrrncyEdtLIMITECRED.Value := 0;
+    CrrncyEdtLIMITECREDITO.Value := 0;
+    CrrncyEdtLIMITECREDUTILIZ.Value := 0;
+
+    ValidarProdutor;
+
+    //Alimentando os campos de nome do distribuidor, cpfcnpj e limite de crédito
+    with SQLQryAUX do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT DISTRIBUIDOR.CODDISTRIB, DISTRIBUIDOR.CNPJ, DISTRIBUIDOR.NOME, LIMITECREDITO.LIMITECRED ');
+        SQL.Add('  FROM DISTRIBUIDOR, LIMITECREDITO');
+        SQL.Add(' WHERE DISTRIBUIDOR.CODDISTRIB = LIMITECREDITO.CODDISTRIB ');
+        SQL.Add('   AND LIMITECREDITO.CODPRODUTOR = :CODPRODUTOR');
+        SQL.Add('   AND DISTRIBUIDOR.CODDISTRIB = :CODDISTRIB ');
+
+        Params.ParamByName('CODPRODUTOR').AsBCD := CrrncyEdtCOD_PRODUTOR.Value;
+        Params.ParamByName('CODDISTRIB').AsBCD := CrrncyEdtCOD_DISTRIB.Value;
+        Open;
+    end;
+
+    EdtNOME_DISTRIB.Text := SQLQryAUX.FieldByName('NOME').AsString;
+    EdtCNPJ_DISTRIB.Text := SQLQryAUX.FieldByName('CNPJ').AsString;
+
+    LimiteCredito;
+
+end;
+
+procedure TFrmNegociacao.CrrncyEdtCOD_PRODChange(Sender: TObject);
+begin
+
+    try
+        CrrncyEdtCOD_PRODExit(Sender);
+    except
+        ;
+    end;
+
+end;
+
+procedure TFrmNegociacao.CrrncyEdtCOD_PRODExit(Sender: TObject);
+begin
+
+    //Alimentando os campos de nome do produtor e cpfcnpj
+    EdtNOME_PRODUTO.Text := '';
+    CrrncyEdtPRECO.Value := 0;
+    CrrncyEdtSUBTOTAL.Text := '';
+
+    with SQLQryAUX do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT CODPROD, NOME, PRECO');
+        SQL.Add('  FROM PRODUTO ');
+        SQL.Add(' WHERE CODPROD = :CODPROD ');
+        Params.ParamByName('CODPROD').AsBCD := CrrncyEdtCOD_PROD.Value;
+        Open;
+    end;
+
+    EdtNOME_PRODUTO.Text := SQLQryAUX.FieldByName('NOME').AsString;
+    CrrncyEdtPRECO.Value := SQLQryAUX.FieldByName('PRECO').AsCurrency;
+    CrrncyEdtQTDE.Value := 1;
+    CrrncyEdtQTDE.SetFocus;
+
+end;
+
+procedure TFrmNegociacao.CrrncyEdtCOD_PRODUTORChange(Sender: TObject);
+begin
+
+    try
+        CrrncyEdtCOD_PRODUTORExit(Sender);
+    except
+        ;
+    end;
+
+end;
+
+procedure TFrmNegociacao.CrrncyEdtCOD_PRODUTORExit(Sender: TObject);
+begin
+
+    //Alimentando os campos de nome do produtor e cpfcnpj
+    with SQLQryAUX do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT CODPRODUTOR, CPFCNPJ, NOME');
+        SQL.Add('  FROM PRODUTOR');
+        SQL.Add(' WHERE CODPRODUTOR = :PRODUTOR ');
+        Params.ParamByName('PRODUTOR').AsBCD := CrrncyEdtCOD_PRODUTOR.Value;
+        Open;
+    end;
+
+    EdtNOME_PRODUTOR.Text := SQLQryAUX.FieldByName('NOME').AsString;
+    EdtCPFCNPJ_PRODUTOR.Text := SQLQryAUX.FieldByName('CPFCNPJ').AsString;
+
+    //Limpar os dados do distribuidor
+    {if CrrncyEdtCOD_DISTRIB.Value <> 0 then
+    begin
+        CrrncyEdtCOD_DISTRIB.Value := 0;
+        EdtNOME_DISTRIB.Text := '';
+        EdtCNPJ_DISTRIB.Text := '';
+        CrrncyEdtLIMITECRED.Value := 0;
+        CrrncyEdtLIMITECREDITO.Value := 0;
+        CrrncyEdtLIMITECREDUTILIZ.Value := 0;
+    end;  }
+
+end;
+
+procedure TFrmNegociacao.CrrncyEdtQTDEChange(Sender: TObject);
+begin
+    try
+        CrrncyEdtQTDEExit(Sender);
+    except
+        ;
+    end;
+end;
+
+procedure TFrmNegociacao.CrrncyEdtQTDEExit(Sender: TObject);
+begin
+
+    CrrncyEdtSUBTOTAL.Value := CrrncyEdtPRECO.Value * CrrncyEdtQTDE.Value;
+
+end;
+
+procedure TFrmNegociacao.DBGrid1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+    //Não permite excluir registro da grid
+    if (Shift = [ssCtrl]) and (Key = 46) then
+        Key := 0;
+end;
+
+procedure TFrmNegociacao.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+    Action := CaFree;
+end;
+
+procedure TFrmNegociacao.FormCreate(Sender: TObject);
+begin
+    //Form no centro da tela
+    Left := (GetSystemMetrics(SM_CXSCREEN) - Width - 2) div 2;
+    Top := (GetSystemMetrics(SM_CYSCREEN) - Height - 30) div 2;
+
+    //carregar as imagens de layout em (C:\Projeto\Interface\cabecalho.bmp )
+    try
+        Image1.Picture.LoadFromFile('C:\Projeto\Interface\cabecalho.bmp');
+        Image2.Picture.LoadFromFile('C:\Projeto\Interface\rodape.bmp');
+    except
+        Application.MessageBox('Plataforma de interface desatualizada', 'Aviso!', MB_ICONEXCLAMATION + MB_OK);
+    end;
+
+    FrmPrincipal.SQLQryAUX.Open;
+
+    BttnADD.Enabled := False;
+    BttnREMOVER.Enabled := False;
+    BttnCANCELAR.Enabled := False;
+    BttnFINALIZAR.Enabled := False;
+    GroupBox1.Enabled := False;
+    GroupBox2.Enabled := False;
+    GroupBox3.Enabled := False;
+
+    ClntDtStCDSNEGOC.CreateDataSet;
+
+end;
+
+procedure TFrmNegociacao.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+    if Key = VK_RETURN then
+        Perform(Wm_NextDlgCtl, 0, 0);
+end;
+
+procedure TFrmNegociacao.LimiteCredito;
+begin
+
+    if (CrrncyEdtCOD_PRODUTOR.Value <> 0) and (CrrncyEdtCOD_DISTRIB.Value <> 0) then
+    begin
+        with SQLQryAUX do
+        begin
+            Close;
+            SQL.Clear;
+            SQL.Add('SELECT LIMITECREDITO.LIMITECRED ');
+            SQL.Add('  FROM DISTRIBUIDOR, LIMITECREDITO');
+            SQL.Add(' WHERE DISTRIBUIDOR.CODDISTRIB = LIMITECREDITO.CODDISTRIB ');
+            SQL.Add('   AND LIMITECREDITO.CODPRODUTOR = :CODPRODUTOR');
+            SQL.Add('   AND DISTRIBUIDOR.CODDISTRIB = :CODDISTRIB ');
+
+            Params.ParamByName('CODPRODUTOR').AsBCD := CrrncyEdtCOD_PRODUTOR.Value;
+            Params.ParamByName('CODDISTRIB').AsBCD := CrrncyEdtCOD_DISTRIB.Value;
+            Open;
+        end;
+
+        CrrncyEdtLIMITECREDITO.Value := SQLQryAUX.FieldByName('LIMITECRED').AsCurrency;
+
+        with SQLQryAUX do
+        begin
+            Close;
+            SQL.Clear;
+            SQL.Add('SELECT SUM(PRECO * QT) AS TOT ');
+            SQL.Add('  FROM NEGOCIACAO');
+            SQL.Add(' WHERE STATUS = ''A''');
+            SQL.Add('   AND CODPRODUTOR = :CODPRODUTOR');
+            SQL.Add('   AND CODDISTRIB = :CODDISTRIB ');
+            Params.ParamByName('CODPRODUTOR').AsBCD := CrrncyEdtCOD_PRODUTOR.Value;
+            Params.ParamByName('CODDISTRIB').AsBCD := CrrncyEdtCOD_DISTRIB.Value;
+            Open;
+        end;
+
+        CrrncyEdtLIMITECREDUTILIZ.Value := SQLQryAUX.FieldByName('TOT').AsCurrency;
+        CrrncyEdtLIMITECRED.Value := CrrncyEdtLIMITECREDITO.Value - CrrncyEdtLIMITECREDUTILIZ.Value;
+    end;
+
+end;
+
+procedure TFrmNegociacao.LimparTela;
+begin
+
+    CrrncyEdtCOD_PRODUTOR.Value := 0;
+    EdtNOME_PRODUTOR.Text := '';
+    EdtCPFCNPJ_PRODUTOR.Text := '';
+
+    CrrncyEdtCOD_DISTRIB.Value := 0;
+    EdtNOME_DISTRIB.Text := '';
+    EdtCNPJ_DISTRIB.Text := '';
+    CrrncyEdtLIMITECRED.Value := 0;
+    CrrncyEdtLIMITECREDITO.Value := 0;
+    CrrncyEdtLIMITECREDUTILIZ.Value := 0;
+
+    CrrncyEdtCOD_PROD.Value := 0;
+    EdtNOME_PRODUTO.Text := '';
+    CrrncyEdtPRECO.Value := 0;
+    CrrncyEdtQTDE.Value := 0;
+    CrrncyEdtSUBTOTAL.Value := 0;
+
+    CrrncyEdtTOTAL.Value := 0;
+    EdtSTATUS.Text := '';
+
+end;
+
+procedure TFrmNegociacao.SpeedButton1Click(Sender: TObject);
+begin
+
+    if CrrncyEdtCOD_PRODUTOR.Value = 0 then
+        Abort;
+
+    ValidarProdutor;
+
+    try
+        FrmNegPesqDistrib := TFrmNegPesqDistrib.Create(Application);
+        FrmNegPesqDistrib.Caption := 'Pesquisa por distribuidor';
+        FrmNegPesqDistrib.ShowModal;
+
+        if (CrrncyEdtCOD_DISTRIB.Value <> 0) and (EdtNOME_DISTRIB.Text <> '') then
+            CrrncyEdtCOD_PROD.SetFocus;
+
+    finally
+        FrmNegPesqDistrib.Free;
+    end;
+
+end;
+
+procedure TFrmNegociacao.SpeedButton2Click(Sender: TObject);
+begin
+
+    try
+        FrmNegPesqProdutor := TFrmNegPesqProdutor.Create(Application);
+        FrmNegPesqProdutor.Caption := 'Pesquisa por produtor';
+        FrmNegPesqProdutor.ShowModal;
+    finally
+        FrmNegPesqProdutor.Free;
+    end;
+
+end;
+
+procedure TFrmNegociacao.SpeedButton3Click(Sender: TObject);
+begin
+    try
+        FrmNegPesqProduto := TFrmNegPesqProduto.Create(Application);
+        FrmNegPesqProduto.Caption := 'Pesquisa por produto';
+        FrmNegPesqProduto.ShowModal;
+    finally
+        FrmNegPesqProduto.Free;
+    end;
+end;
+
+procedure TFrmNegociacao.TotalItem;
+begin
+
+    EdtSTATUS.Text := ClntDtStCDSNEGOCSTATUS.AsString;
+    CrrncyEdtTOTAL.Value := 0;
+
+    with ClntDtStCDSNEGOC do
+    begin
+        DisableControls;
+        First;
+
+        while not eof do
+        begin
+            CrrncyEdtTOTAL.Value := CrrncyEdtTOTAL.Value + ClntDtStCDSNEGOCclSUBTOT.AsCurrency;
+            Next;
+        end;
+
+        EnableControls;
+    end;
+end;
+
+procedure TFrmNegociacao.ValidarProdutor;
+begin
+
+    with SQLQryAUX do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT COUNT(*) AS QT');
+        SQL.Add('  FROM PRODUTOR ');
+        SQL.Add(' WHERE CODPRODUTOR = :CODPRODUTOR ');
+        Params.ParamByName('CODPRODUTOR').AsBCD := CrrncyEdtCOD_PRODUTOR.Value;
+        Open;
+    end;
+
+    if SQLQryAUX.FieldByName('QT').AsCurrency = 0 then
+    begin
+        Application.MessageBox(pchar('Informe um produtor válido!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+    end;
+
+end;
+
+procedure TFrmNegociacao.ValidarAdd;
+begin
+   //
+end;
+
+procedure TFrmNegociacao.ValidarAdicionar;
+begin
+
+    //Validar Produtor
+    if CrrncyEdtCOD_PRODUTOR.Value = 0 then
+    begin
+        Application.MessageBox(pchar('Informe um produtor válido!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+    end
+    else
+        ValidarProdutor;
+
+    //Validar Distribuidor
+    if CrrncyEdtCOD_DISTRIB.Value = 0 then
+    begin
+        Application.MessageBox(pchar('Informe um distribuidor válido!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+    end
+    else
+    begin
+
+        with SQLQryAUX do
+        begin
+            Close;
+            SQL.Clear;
+            SQL.Add('SELECT COUNT(*) AS QT');
+            SQL.Add('  FROM DISTRIBUIDOR, LIMITECREDITO');
+            SQL.Add(' WHERE DISTRIBUIDOR.CODDISTRIB = LIMITECREDITO.CODDISTRIB ');
+            SQL.Add('   AND LIMITECREDITO.CODPRODUTOR = :CODPRODUTOR');
+            SQL.Add('   AND DISTRIBUIDOR.CODDISTRIB = :CODDISTRIB ');
+
+            Params.ParamByName('CODPRODUTOR').AsBCD := CrrncyEdtCOD_PRODUTOR.Value;
+            Params.ParamByName('CODDISTRIB').AsBCD := CrrncyEdtCOD_DISTRIB.Value;
+            Open;
+        end;
+
+        if SQLQryAUX.FieldByName('QT').AsCurrency = 0 then
+        begin
+            Application.MessageBox(pchar('Informe um distribuidor válido!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+            Abort;
+        end;
+    end;
+
+    //Validar Produto
+    if CrrncyEdtCOD_PROD.Value = 0 then
+    begin
+        Application.MessageBox(pchar('Informe um produto válido!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+    end
+    else
+    begin
+        with SQLQryAUX do
+        begin
+            Close;
+            SQL.Clear;
+            SQL.Add('SELECT COUNT(*) AS QT');
+            SQL.Add('  FROM PRODUTO ');
+            SQL.Add(' WHERE CODPROD = :CODPROD ');
+            Params.ParamByName('CODPROD').AsBCD := CrrncyEdtCOD_PROD.Value;
+            Open;
+        end;
+
+        if SQLQryAUX.FieldByName('QT').AsCurrency = 0 then
+        begin
+            Application.MessageBox(pchar('Informe um produtor válido!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+            Abort;
+        end;
+    end;
+
+    if CrrncyEdtQTDE.Value <= 0 then
+    begin
+        Application.MessageBox(pchar('Informe quantidade válida!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+    end;
+
+end;
+
+end.
+

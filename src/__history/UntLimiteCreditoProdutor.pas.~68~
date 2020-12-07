@@ -1,0 +1,327 @@
+unit UntLimiteCreditoProdutor;
+
+interface
+
+uses
+    Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+    System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+    Vcl.ExtCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls, Vcl.Mask,
+    Vcl.DBCtrls, RxToolEdit, RxCurrEdit, Vcl.Buttons, Data.FMTBcd,
+    Datasnap.DBClient, Datasnap.Provider, Data.SqlExpr;
+
+type
+    TFrmLimiteCreditoProdutor = class(TForm)
+        Image1: TImage;
+        Image2: TImage;
+        Panel2: TPanel;
+        GroupBox1: TGroupBox;
+        Label1: TLabel;
+        Label2: TLabel;
+        Label3: TLabel;
+        DBEdit1: TDBEdit;
+        DBEdit2: TDBEdit;
+        DBEdit3: TDBEdit;
+        GroupBox2: TGroupBox;
+        Label4: TLabel;
+        Label5: TLabel;
+        Label6: TLabel;
+        Label7: TLabel;
+        CrrncyEdtCOD_DISTRIB: TCurrencyEdit;
+        EdtNOME_DISTRIB: TEdit;
+        CrrncyEdtLIMITECRED: TCurrencyEdit;
+        Button1: TButton;
+        EdtCNPJ_DISTRIB: TEdit;
+        Panel1: TPanel;
+        GroupBox3: TGroupBox;
+        SpeedButton1: TSpeedButton;
+        SQLQryPESQ_DISTRIB: TSQLQuery;
+        DtStPrvdrPESQ_DISTRIB: TDataSetProvider;
+        ClntDtStPESQ_DISTRIB: TClientDataSet;
+        DtSrcPESQ_DISTRIB: TDataSource;
+        ClntDtStPESQ_DISTRIBCODDISTRIB: TFMTBCDField;
+        ClntDtStPESQ_DISTRIBCNPJ: TWideStringField;
+        ClntDtStPESQ_DISTRIBNOME: TWideStringField;
+        ClntDtStPESQ_DISTRIBDTCADASTRO: TSQLTimeStampField;
+        ClntDtStPESQ_DISTRIBDTULTALTER: TSQLTimeStampField;
+        SQLQryEXEC: TSQLQuery;
+        SQLQryLIMITECRED: TSQLQuery;
+        DtStPrvdrLIMITECRED: TDataSetProvider;
+        ClntDtStLIMITECRED: TClientDataSet;
+        DtSrcLIMITECRED: TDataSource;
+        ClntDtStLIMITECREDCODPRODUTOR: TFMTBCDField;
+        ClntDtStLIMITECREDPRODUTOR: TWideStringField;
+        ClntDtStLIMITECREDCODDISTRIB: TFMTBCDField;
+        ClntDtStLIMITECREDDISTRIBUIDOR: TWideStringField;
+        ClntDtStLIMITECREDLIMITECRED: TFMTBCDField;
+    DBGrid1: TDBGrid;
+        procedure FormCreate(Sender: TObject);
+        procedure FormClose(Sender: TObject; var Action: TCloseAction);
+        procedure CrrncyEdtCOD_DISTRIBExit(Sender: TObject);
+        procedure SpeedButton1Click(Sender: TObject);
+        procedure Button1Click(Sender: TObject);
+        procedure FormShow(Sender: TObject);
+    procedure DBGrid1KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    private
+    { Private declarations }
+        procedure AtualizarGrid();
+    public
+    { Public declarations }
+    end;
+
+var
+    FrmLimiteCreditoProdutor: TFrmLimiteCreditoProdutor;
+
+implementation
+
+uses
+    Unt0002, UntProdutor, UntListaProdutor, UntPESQ_DISTRIB, UntPrincipal;
+
+{$R *.dfm}
+
+procedure TFrmLimiteCreditoProdutor.AtualizarGrid;
+begin
+    ClntDtStLIMITECRED.Close;
+
+    with SQLQryLIMITECRED do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT LIMITECREDITO.CODPRODUTOR, PRODUTOR.NOME AS PRODUTOR, ');
+        SQL.Add('       LIMITECREDITO.CODDISTRIB, DISTRIBUIDOR.NOME AS DISTRIBUIDOR,');
+        SQL.Add('       LIMITECREDITO.LIMITECRED');
+        SQL.Add('  FROM LIMITECREDITO, PRODUTOR, DISTRIBUIDOR');
+        SQL.Add(' WHERE PRODUTOR.CODPRODUTOR = LIMITECREDITO.CODPRODUTOR');
+        SQL.Add('   AND DISTRIBUIDOR.CODDISTRIB = LIMITECREDITO.CODDISTRIB');
+        SQL.Add('   AND LIMITECREDITO.CODPRODUTOR = :CODPRODUTOR ');
+        Params.ParamByName('CODPRODUTOR').AsBCD := DBEdit1.Field.Value;
+        Open;
+    end;
+
+    ClntDtStLIMITECRED.Open;
+end;
+
+procedure TFrmLimiteCreditoProdutor.Button1Click(Sender: TObject);
+begin
+
+    if CrrncyEdtCOD_DISTRIB.Value = 0 then
+    begin
+        Application.MessageBox(pchar('Por favor, preencha o campo código do distruidor!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+    end
+    else
+    begin
+        ClntDtStPESQ_DISTRIB.Close;
+
+        with SQLQryPESQ_DISTRIB do
+        begin
+            Close;
+            SQL.Clear;
+            SQL.Add('SELECT CODDISTRIB, CNPJ, NOME, DTCADASTRO, DTULTALTER');
+            SQL.Add('  FROM DISTRIBUIDOR');
+            SQL.Add(' WHERE CODDISTRIB <> 0 ');
+
+            if CrrncyEdtCOD_DISTRIB.Value <> 0 then
+            begin
+                SQL.Add('   AND CODDISTRIB = :CODDISTRIB ');
+                Params.ParamByName('CODDISTRIB').AsBCD := CrrncyEdtCOD_DISTRIB.Value;
+            end;
+
+        end;
+
+        ClntDtStPESQ_DISTRIB.Open;
+
+        if ClntDtStPESQ_DISTRIB.RecordCount = 0 then
+        begin
+            Application.MessageBox(pchar('Código do distruidor inválido!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+            Abort;
+        end
+
+    end;
+
+    if CrrncyEdtLIMITECRED.Value = 0 then
+    begin
+        Application.MessageBox(pchar('Por favor, preencha o campo limite de crédito!'), pchar('Aviso!'), MB_ICONEXCLAMATION);
+        Abort;
+    end;
+
+    //Validar se existe dados na tabela
+    with SQLQryEXEC do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT COUNT(*) AS QT, LIMITECRED');
+        SQL.Add('  FROM LIMITECREDITO');
+        SQL.Add(' WHERE CODPRODUTOR = :CODPRODUTOR ');
+        SQL.Add('   AND CODDISTRIB = :CODDISTRIB');
+        SQL.Add(' GROUP BY LIMITECRED   ');
+        Params.ParamByName('CODPRODUTOR').AsBCD := DBEdit1.Field.Value;
+        Params.ParamByName('CODDISTRIB').AsBCD := CrrncyEdtCOD_DISTRIB.Value;
+        Open;
+    end;
+
+    if SQLQryEXEC.FieldByName('QT').AsCurrency <> 0 then
+    begin
+
+        if Application.MessageBox(pchar('Deseja alterar o limite de crédito no valor de ' + FormatFloat(',0.00', SQLQryEXEC.FieldByName('LIMITECRED').AsCurrency) +' do produtor ' + DBEdit2.Field.Text + '.'  + #13#10 +
+           'Para o novo valor de limite de crédito de '+ FormatFloat(',0.00', CrrncyEdtLIMITECRED.Value) + '.'), pchar('Aviso!'), MB_ICONQUESTION + MB_YESNO + +MB_DEFBUTTON2) = ID_NO then
+            Abort;
+
+        try
+            //Início de transação
+            DtM0002.TD.TransactionID := 1;
+            DtM0002.sqcORALOGIN.StartTransaction(DtM0002.TD);
+
+            //Alterando dados
+            with SQLQryEXEC do
+            begin
+                Close;
+                SQL.Clear;
+                SQL.Add('UPDATE LIMITECREDITO SET LIMITECRED = :LIMITECRED');
+                SQL.Add(' WHERE CODPRODUTOR = :CODPRODUTOR');
+                SQL.Add('   AND CODDISTRIB = :CODDISTRIB');
+                Params.ParamByName('LIMITECRED').AsBCD := CrrncyEdtLIMITECRED.Value;
+                Params.ParamByName('CODPRODUTOR').AsBCD := DBEdit1.Field.Value;
+                Params.ParamByName('CODDISTRIB').AsBCD := CrrncyEdtCOD_DISTRIB.Value;
+                ExecSql(False)
+            end;
+
+            //Comitando a transação
+            DtM0002.sqcORALOGIN.Commit(DtM0002.TD);
+        except
+            on E: Exception do
+            begin
+                //Exceção, desfazendo a transação
+                DtM0002.sqcORALOGIN.Rollback(DtM0002.TD);
+                Application.MessageBox(pchar(e.Message), pchar('Validação!'), MB_ICONEXCLAMATION);
+            end;
+        end;
+
+    end
+    else
+    begin
+
+        try
+            // Início de transação
+            DtM0002.TD.TransactionID := 1;
+            DtM0002.sqcORALOGIN.StartTransaction(DtM0002.TD);
+
+            //Inserindo dados
+            with SQLQryEXEC do
+            begin
+                Close;
+                SQL.Clear;
+                SQL.Add('INSERT INTO LIMITECREDITO( ');
+                SQL.Add('    CODPRODUTOR, CODDISTRIB, LIMITECRED)');
+                SQL.Add('VALUES(');
+                SQL.Add('    :CODPRODUTOR, :CODDISTRIB, :LIMITECRED)');
+
+                Params.ParamByName('CODPRODUTOR').AsBCD := DBEdit1.Field.Value;
+                Params.ParamByName('CODDISTRIB').AsBCD := CrrncyEdtCOD_DISTRIB.Value;
+                Params.ParamByName('LIMITECRED').AsBCD := CrrncyEdtLIMITECRED.Value;
+                ExecSql(False)
+            end;
+
+            //Comitando a transação
+            DtM0002.sqcORALOGIN.Commit(DtM0002.TD);
+        except
+            on E: Exception do
+            begin
+                //Exceção, desfazendo a transação
+                DtM0002.sqcORALOGIN.Rollback(DtM0002.TD);
+                MessageBox(0, PChar(E.Message), PChar(Caption), MB_ICONERROR + MB_OK);
+            end;
+        end;
+
+    end;
+
+    AtualizarGrid;
+
+    CrrncyEdtCOD_DISTRIB.Value := 0;
+    EdtNOME_DISTRIB.Text := '';
+    EdtCNPJ_DISTRIB.Text := '';
+    CrrncyEdtLIMITECRED.Text := '';
+
+    FrmPrincipal.MsgFinal;
+
+end;
+
+procedure TFrmLimiteCreditoProdutor.CrrncyEdtCOD_DISTRIBExit(Sender: TObject);
+begin
+
+    //Alimentando os campos de nome do distribuidor e cnpj
+    with SQLQryEXEC do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT CODDISTRIB, CNPJ, NOME, DTCADASTRO, DTULTALTER');
+        SQL.Add('  FROM DISTRIBUIDOR');
+        SQL.Add(' WHERE CODDISTRIB <> 0 ');
+        SQL.Add('   AND CODDISTRIB = :CODDISTRIB ');
+        Params.ParamByName('CODDISTRIB').AsBCD := CrrncyEdtCOD_DISTRIB.Value;
+        Open;
+    end;
+
+    EdtNOME_DISTRIB.Text := SQLQryEXEC.FieldByName('NOME').AsString;
+    EdtCNPJ_DISTRIB.Text := SQLQryEXEC.FieldByName('CNPJ').AsString;
+
+end;
+
+procedure TFrmLimiteCreditoProdutor.DBGrid1KeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+    //Não permite excluir registro da grid
+    if (Shift = [ssCtrl]) and (Key = 46) then
+        Key := 0;
+end;
+
+procedure TFrmLimiteCreditoProdutor.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+    Action := CaFree;
+end;
+
+procedure TFrmLimiteCreditoProdutor.FormCreate(Sender: TObject);
+begin
+
+    //Form no centro da tela
+    Left := (GetSystemMetrics(SM_CXSCREEN) - Width - 2) div 2;
+    Top := (GetSystemMetrics(SM_CYSCREEN) - Height - 30) div 2;
+
+    //carregar as imagens de layout em (C:\Projeto\Interface\cabecalho.bmp )
+    try
+        Image1.Picture.LoadFromFile('C:\Projeto\Interface\cabecalho.bmp');
+        Image2.Picture.LoadFromFile('C:\Projeto\Interface\rodape.bmp');
+    except
+        Application.MessageBox('Plataforma de interface desatualizada', 'Aviso!', MB_ICONEXCLAMATION + MB_OK);
+    end;
+
+end;
+
+procedure TFrmLimiteCreditoProdutor.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+
+    //Para enter ter a mesma função tab.
+    if Key = VK_RETURN then
+        Perform(Wm_NextDlgCtl,0,0);
+end;
+
+procedure TFrmLimiteCreditoProdutor.FormShow(Sender: TObject);
+begin
+    AtualizarGrid;
+end;
+
+procedure TFrmLimiteCreditoProdutor.SpeedButton1Click(Sender: TObject);
+begin
+    try
+        FrmPESQ_DISTRIB := TFrmPESQ_DISTRIB.Create(Application);
+        FrmPESQ_DISTRIB.Caption := 'Pesquisa por distribuidor';
+        FrmPESQ_DISTRIB.ShowModal;
+    finally
+        FrmPESQ_DISTRIB.Free;
+    end;
+end;
+
+end.
+

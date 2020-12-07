@@ -1,0 +1,40 @@
+object FrmManutecaoNegociacao: TFrmManutecaoNegociacao
+  Left = 0
+  Top = 0
+  Caption = 'FrmManutecaoNegociacao'
+  ClientHeight = 618
+  ClientWidth = 919
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Image1: TImage
+    Left = 0
+    Top = 0
+    Width = 919
+    Height = 41
+    Align = alTop
+    AutoSize = True
+    ExplicitLeft = -262
+    ExplicitTop = 1
+    ExplicitWidth = 897
+  end
+  object Image2: TImage
+    Left = 0
+    Top = 590
+    Width = 919
+    Height = 28
+    Align = alBottom
+    AutoSize = True
+    ExplicitLeft = -93
+    ExplicitTop = 41
+    ExplicitWidth = 897
+  end
+end

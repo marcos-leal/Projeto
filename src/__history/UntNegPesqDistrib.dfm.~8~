@@ -1,0 +1,189 @@
+object FrmNegPesqDistrib: TFrmNegPesqDistrib
+  Left = 0
+  Top = 0
+  Caption = 'FrmNegPesqDistrib'
+  ClientHeight = 416
+  ClientWidth = 558
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Image2: TImage
+    Left = 0
+    Top = 388
+    Width = 558
+    Height = 28
+    Align = alBottom
+    AutoSize = True
+    ExplicitTop = 271
+    ExplicitWidth = 574
+  end
+  object Image1: TImage
+    Left = 0
+    Top = 0
+    Width = 558
+    Height = 41
+    Align = alTop
+    AutoSize = True
+    ExplicitLeft = -95
+    ExplicitWidth = 730
+  end
+  object Panel1: TPanel
+    Left = 0
+    Top = 41
+    Width = 558
+    Height = 64
+    Align = alTop
+    TabOrder = 0
+    ExplicitWidth = 557
+    object Label5: TLabel
+      Left = 15
+      Top = 5
+      Width = 42
+      Height = 13
+      Caption = 'Produtor'
+      Transparent = True
+    end
+    object Label1: TLabel
+      Left = 310
+      Top = 6
+      Width = 25
+      Height = 13
+      Caption = 'CNPJ'
+      Transparent = True
+    end
+    object Label2: TLabel
+      Left = 15
+      Top = 47
+      Width = 234
+      Height = 13
+      Caption = 'Duplo clique na grid para selecionar o distribuidor'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object EdtNOME: TEdit
+      Left = 15
+      Top = 20
+      Width = 285
+      Height = 21
+      CharCase = ecUpperCase
+      Ctl3D = True
+      ParentCtl3D = False
+      TabOrder = 0
+    end
+    object BttnLOCALIZAR: TButton
+      Left = 460
+      Top = 20
+      Width = 75
+      Height = 25
+      Caption = 'Localizar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 2
+      OnClick = BttnLOCALIZARClick
+    end
+    object EdtCNPJ: TEdit
+      Left = 310
+      Top = 20
+      Width = 136
+      Height = 21
+      CharCase = ecUpperCase
+      Ctl3D = True
+      MaxLength = 18
+      ParentCtl3D = False
+      TabOrder = 1
+    end
+  end
+  object DBGrid1: TDBGrid
+    Left = 0
+    Top = 105
+    Width = 558
+    Height = 283
+    Hint = 'Duplo clique para selecionar o distribuidor'
+    Align = alClient
+    DataSource = DtSrcDISTRIB
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    OnDblClick = DBGrid1DblClick
+  end
+  object DtSrcDISTRIB: TDataSource
+    DataSet = ClntDtStDISTRIB
+    Left = 191
+    Top = 200
+  end
+  object ClntDtStDISTRIB: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DtStPrvdrDISTRIB'
+    Left = 175
+    Top = 184
+    object ClntDtStDISTRIBCODDISTRIB: TFMTBCDField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'CODDISTRIB'
+      Required = True
+      Precision = 10
+      Size = 0
+    end
+    object ClntDtStDISTRIBCNPJ: TWideStringField
+      FieldName = 'CNPJ'
+      Required = True
+      Size = 18
+    end
+    object ClntDtStDISTRIBNOME: TWideStringField
+      DisplayLabel = 'Distribuidor'
+      FieldName = 'NOME'
+      Size = 60
+    end
+    object ClntDtStDISTRIBDTCADASTRO: TSQLTimeStampField
+      FieldName = 'DTCADASTRO'
+    end
+    object ClntDtStDISTRIBDTULTALTER: TSQLTimeStampField
+      FieldName = 'DTULTALTER'
+    end
+    object ClntDtStDISTRIBLIMITECRED: TFMTBCDField
+      FieldName = 'LIMITECRED'
+      Precision = 12
+      Size = 2
+    end
+  end
+  object DtStPrvdrDISTRIB: TDataSetProvider
+    DataSet = SQLQryDISTRIB
+    Left = 167
+    Top = 168
+  end
+  object SQLQryDISTRIB: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      
+        'SELECT DISTRIBUIDOR.CODDISTRIB, DISTRIBUIDOR.CNPJ, DISTRIBUIDOR.' +
+        'NOME, '
+      
+        '       DISTRIBUIDOR.DTCADASTRO, DISTRIBUIDOR.DTULTALTER, LIMITEC' +
+        'REDITO.LIMITECRED '
+      '  FROM DISTRIBUIDOR, LIMITECREDITO'
+      ' WHERE DISTRIBUIDOR.CODDISTRIB = LIMITECREDITO.CODDISTRIB '
+      '   AND LIMITECREDITO.CODPRODUTOR = 0')
+    SQLConnection = DtM0002.sqcORALOGIN
+    Left = 159
+    Top = 152
+  end
+end

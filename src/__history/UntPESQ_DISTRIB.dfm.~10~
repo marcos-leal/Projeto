@@ -1,0 +1,133 @@
+object FrmPESQ_DISTRIB: TFrmPESQ_DISTRIB
+  Left = 0
+  Top = 0
+  Caption = 'FrmPESQ_DISTRIB'
+  ClientHeight = 381
+  ClientWidth = 557
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Image1: TImage
+    Left = 0
+    Top = 0
+    Width = 557
+    Height = 41
+    Align = alTop
+    AutoSize = True
+    ExplicitLeft = -95
+    ExplicitWidth = 730
+  end
+  object Image2: TImage
+    Left = 0
+    Top = 353
+    Width = 557
+    Height = 28
+    Align = alBottom
+    AutoSize = True
+    ExplicitLeft = -95
+    ExplicitTop = 271
+    ExplicitWidth = 730
+  end
+  object Panel1: TPanel
+    Left = 0
+    Top = 41
+    Width = 557
+    Height = 64
+    Align = alTop
+    TabOrder = 0
+    ExplicitWidth = 635
+    object Label5: TLabel
+      Left = 15
+      Top = 5
+      Width = 54
+      Height = 13
+      Caption = 'Distribuidor'
+      Transparent = True
+    end
+    object Label1: TLabel
+      Left = 310
+      Top = 6
+      Width = 25
+      Height = 13
+      Caption = 'CNPJ'
+      Transparent = True
+    end
+    object EdtNOME: TEdit
+      Left = 15
+      Top = 20
+      Width = 285
+      Height = 21
+      CharCase = ecUpperCase
+      Ctl3D = True
+      ParentCtl3D = False
+      TabOrder = 0
+    end
+    object BttnLOCALIZAR: TButton
+      Left = 459
+      Top = 20
+      Width = 75
+      Height = 25
+      Caption = 'Localizar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 2
+      OnClick = BttnLOCALIZARClick
+    end
+    object EdtCNPJ: TEdit
+      Left = 310
+      Top = 20
+      Width = 136
+      Height = 21
+      CharCase = ecUpperCase
+      Ctl3D = True
+      MaxLength = 18
+      ParentCtl3D = False
+      TabOrder = 1
+    end
+  end
+  object DBGrid1: TDBGrid
+    Left = 0
+    Top = 105
+    Width = 557
+    Height = 248
+    Align = alClient
+    DataSource = FrmLimiteCreditoProdutor.DtSrcPESQ_DISTRIB
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    OnKeyDown = DBGrid1KeyDown
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'CODDISTRIB'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NOME'
+        Width = 336
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'CNPJ'
+        Visible = True
+      end>
+  end
+end

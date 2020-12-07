@@ -1,0 +1,70 @@
+unit UntNegPesqProd;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB, Vcl.Grids,
+  Vcl.DBGrids, Vcl.StdCtrls, Data.FMTBcd, Datasnap.Provider, Datasnap.DBClient,
+  Data.SqlExpr;
+
+type
+  TFrmNegPesqProd = class(TForm)
+    Image1: TImage;
+    Image2: TImage;
+    Panel1: TPanel;
+    Label5: TLabel;
+    Label1: TLabel;
+    Label2: TLabel;
+    EdtNOME: TEdit;
+    BttnLOCALIZAR: TButton;
+    EdtCNPJ: TEdit;
+    DBGrid1: TDBGrid;
+    SQLQryPRODUTO: TSQLQuery;
+    ClntDtStPRODUTO: TClientDataSet;
+    ClntDtStPRODUTOCODPROD: TFMTBCDField;
+    ClntDtStPRODUTONOME: TWideStringField;
+    ClntDtStPRODUTOPRECO: TFMTBCDField;
+    ClntDtStPRODUTODTCADASTRO: TSQLTimeStampField;
+    ClntDtStPRODUTODTULTALTER: TSQLTimeStampField;
+    DtStPrvdrPRODUTO: TDataSetProvider;
+    DtSrcPRODUTO: TDataSource;
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmNegPesqProd: TFrmNegPesqProd;
+
+implementation
+
+uses
+  Unt0002, UntPrincipal, UntNegociacao;
+
+{$R *.dfm}
+
+procedure TFrmNegPesqProd.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+    Action := CaFree;
+end;
+
+procedure TFrmNegPesqProd.FormCreate(Sender: TObject);
+begin
+    //Form no centro da tela
+    Left := (GetSystemMetrics(SM_CXSCREEN) - Width - 2) div 2;
+    Top := (GetSystemMetrics(SM_CYSCREEN) - Height - 30) div 2;
+
+    //carregar as imagens de layout em (C:\Projeto\Interface\cabecalho.bmp )
+    try
+        Image1.Picture.LoadFromFile('C:\Projeto\Interface\cabecalho.bmp');
+        Image2.Picture.LoadFromFile('C:\Projeto\Interface\rodape.bmp');
+    except
+        Application.MessageBox('Plataforma de interface desatualizada', 'Aviso!', MB_ICONEXCLAMATION + MB_OK);
+    end;
+end;
+
+end.

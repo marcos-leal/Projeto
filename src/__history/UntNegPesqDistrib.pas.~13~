@@ -1,0 +1,102 @@
+unit UntNegPesqDistrib;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Data.FMTBcd, Data.SqlExpr,
+  Datasnap.Provider, Datasnap.DBClient, Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls,
+  Vcl.ExtCtrls;
+
+type
+  TFrmNegPesqDistrib = class(TForm)
+    Image2: TImage;
+    Image1: TImage;
+    Panel1: TPanel;
+    Label5: TLabel;
+    Label1: TLabel;
+    Label2: TLabel;
+    EdtNOME: TEdit;
+    BttnLOCALIZAR: TButton;
+    EdtCNPJ: TEdit;
+    DBGrid1: TDBGrid;
+    DtSrcDISTRIB: TDataSource;
+    ClntDtStDISTRIB: TClientDataSet;
+    ClntDtStDISTRIBCODDISTRIB: TFMTBCDField;
+    ClntDtStDISTRIBCNPJ: TWideStringField;
+    ClntDtStDISTRIBNOME: TWideStringField;
+    ClntDtStDISTRIBDTCADASTRO: TSQLTimeStampField;
+    ClntDtStDISTRIBDTULTALTER: TSQLTimeStampField;
+    DtStPrvdrDISTRIB: TDataSetProvider;
+    SQLQryDISTRIB: TSQLQuery;
+    ClntDtStDISTRIBLIMITECRED: TFMTBCDField;
+    procedure BttnLOCALIZARClick(Sender: TObject);
+    procedure DBGrid1DblClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmNegPesqDistrib: TFrmNegPesqDistrib;
+
+implementation
+
+uses
+  Unt0002, UntPrincipal, UntNegociacao;
+
+{$R *.dfm}
+
+procedure TFrmNegPesqDistrib.BttnLOCALIZARClick(Sender: TObject);
+begin
+
+    ClntDtStDISTRIB.Close;
+
+    with SQLQryDISTRIB do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT DISTRIBUIDOR.CODDISTRIB, DISTRIBUIDOR.CNPJ, DISTRIBUIDOR.NOME, ');
+        SQL.Add('       DISTRIBUIDOR.DTCADASTRO, DISTRIBUIDOR.DTULTALTER, LIMITECREDITO.LIMITECRED ');
+        SQL.Add('  FROM DISTRIBUIDOR, LIMITECREDITO');
+        SQL.Add(' WHERE DISTRIBUIDOR.CODDISTRIB = LIMITECREDITO.CODDISTRIB ');
+        SQL.Add('   AND LIMITECREDITO.CODPRODUTOR = :CODPRODUTOR');
+        Params.ParamByName('CODPRODUTOR').AsBCD := FrmNegociacao.CrrncyEdtCOD_PRODUTOR.Value;
+
+        if EdtNOME.Text <> '' then
+        begin
+            SQL.Add('  AND DISTRIBUIDOR.NOME LIKE :NOME');
+            Params.ParamByName('NOME').AsString := EdtNOME.Text + '%';
+        end;
+
+        if EdtCNPJ.Text <> '' then
+        begin
+            SQL.Add('  AND REPLACE(REPLACE(REPLACE(DISTRIBUIDOR.CNPJ,''.'',''''),''/'',''''),''-'','''') = :CNPJ');
+            Params.ParamByName('CNPJ').AsString := FrmPrincipal.RemoveChars(EdtCNPJ.Text, './-');
+        end;
+
+        SQL.Add(' ORDER BY NOME');
+
+    end;
+
+    ClntDtStDISTRIB.Open;
+
+end;
+
+procedure TFrmNegPesqDistrib.DBGrid1DblClick(Sender: TObject);
+begin
+    if ClntDtStDISTRIB.RecordCount = 0 then
+        Abort;
+
+    FrmNegociacao.CrrncyEdtCOD_DISTRIB.Value := ClntDtStDISTRIBCODDISTRIB.AsCurrency;
+    FrmNegociacao.EdtNOME_DISTRIB.Text := ClntDtStDISTRIBNOME.AsString;
+    FrmNegociacao.EdtCNPJ_DISTRIB.Text := ClntDtStDISTRIBCNPJ.AsString;
+    FrmNegociacao.EdtLIMITECRED.Value := ClntDtStDISTRIBLIMITECRED.AsString;
+
+    Close;
+end;
+
+end.
+
+

@@ -1,0 +1,33 @@
+program Prjct;
+
+uses
+  Vcl.Forms,
+  Unt0002 in 'Unt0002.pas' {DtM0002: TDataModule},
+  UntPrincipal in 'UntPrincipal.pas' {FrmPrincipal},
+  UntProdutor in 'UntProdutor.pas' {FrmProdutor},
+  UntDistribuidor in 'UntDistribuidor.pas' {FrmDistribuidor},
+  UntListaProdutor in 'UntListaProdutor.pas' {FrmListaProdutor},
+  UntListaDistribuidor in 'UntListaDistribuidor.pas' {FrmListaDistribuidor},
+  UntLimiteCreditoProdutor in 'UntLimiteCreditoProdutor.pas' {FrmLimiteCreditoProdutor},
+  UntPESQ_DISTRIB in 'UntPESQ_DISTRIB.pas' {FrmPESQ_DISTRIB},
+  UntProdutoPreco in 'UntProdutoPreco.pas' {FrmProdutoPreco},
+  UntListaProdPreco in 'UntListaProdPreco.pas' {FrmListaProdPreco},
+  UntNegociacao in 'UntNegociacao.pas' {FrmNegociacao},
+  UntManutNegoc in 'UntManutNegoc.pas' {FrmManutNegoc},
+  UntNegPesqProdutor in 'UntNegPesqProdutor.pas' {FrmNegPesqProdutor},
+  UntNegPesqDistrib in 'UntNegPesqDistrib.pas' {FrmNegPesqDistrib},
+  UntManutecaoNegociacao in 'UntManutecaoNegociacao.pas' {FrmManutecaoNegociacao},
+  UntListarNegociacao in 'UntListarNegociacao.pas' {FrmListarNegociacao},
+  UntManuNegocAux in 'UntManuNegocAux.pas' {FrmManuNegocAux},
+  UntNegPesqProduto in 'UntNegPesqProduto.pas' {FrmNegPesqProduto};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TDtM0002, DtM0002);
+  Application.CreateForm(TFrmPrincipal, FrmPrincipal);
+  Application.CreateForm(TFrmNegPesqProduto, FrmNegPesqProduto);
+  Application.Run;
+end.

@@ -1,0 +1,108 @@
+object DtM0002: TDtM0002
+  OldCreateOrder = False
+  Height = 419
+  Width = 595
+  object sqcORALOGIN: TSQLConnection
+    ConnectionName = 'OracleConnection'
+    DriverName = 'Oracle'
+    LoginPrompt = False
+    Params.Strings = (
+      'DriverUnit=Data.DBXOracle'
+      
+        'DriverPackageLoader=TDBXDynalinkDriverLoader,DBXCommonDriver240.' +
+        'bpl'
+      
+        'DriverAssemblyLoader=Borland.Data.TDBXDynalinkDriverLoader,Borla' +
+        'nd.Data.DbxCommonDriver,Version=24.0.0.0,Culture=neutral,PublicK' +
+        'eyToken=91d62ebb5b0d1b1b'
+      
+        'MetaDataPackageLoader=TDBXOracleMetaDataCommandFactory,DbxOracle' +
+        'Driver240.bpl'
+      
+        'MetaDataAssemblyLoader=Borland.Data.TDBXOracleMetaDataCommandFac' +
+        'tory,Borland.Data.DbxOracleDriver,Version=24.0.0.0,Culture=neutr' +
+        'al,PublicKeyToken=91d62ebb5b0d1b1b'
+      'GetDriverFunc=getSQLDriverORACLE'
+      'LibraryName=dbxora.dll'
+      'LibraryNameOsx=libsqlora.dylib'
+      'VendorLib=oci.dll'
+      'VendorLibWin64=oci.dll'
+      'VendorLibOsx=libociei.dylib'
+      'MaxBlobSize=-1'
+      'IsolationLevel=ReadCommitted'
+      'OSAuthentication=False'
+      'MultipleTransactions=False'
+      'TrimChar=False'
+      'Decimal Separator=.'
+      'DriverName=Oracle'
+      'Database=ORCL'
+      'User_Name=PROJETO'
+      'Password=AVEMARIA'
+      'RowsetSize=20'
+      'BlobSize=-1'
+      'ErrorResourceFile='
+      'LocaleCode=0000'
+      'Oracle TransIsolation=ReadCommited'
+      'OS Authentication=False'
+      'Multiple Transaction=False'
+      'Trim Char=True')
+    Connected = True
+    Left = 40
+    Top = 16
+  end
+  object SQLQryPRODUTOR: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      
+        'SELECT CODPRODUTOR, CPFCNPJ, NOME, DTCADASTRO, DTEXCLUSAO, DTULT' +
+        'ALTER'
+      '  FROM PRODUTOR'
+      ' WHERE CODPRODUTOR = 0 ')
+    SQLConnection = sqcORALOGIN
+    Left = 32
+    Top = 96
+  end
+  object DtStPrvdrPRODUTOR: TDataSetProvider
+    DataSet = SQLQryPRODUTOR
+    Left = 40
+    Top = 104
+  end
+  object ClntDtStPRODUTOR: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DtStPrvdrPRODUTOR'
+    Left = 48
+    Top = 112
+    object ClntDtStPRODUTORCODPRODUTOR: TFMTBCDField
+      FieldName = 'CODPRODUTOR'
+      Required = True
+      Precision = 10
+      Size = 0
+    end
+    object ClntDtStPRODUTORCPFCNPJ: TWideStringField
+      FieldName = 'CPFCNPJ'
+      Required = True
+      Size = 18
+    end
+    object ClntDtStPRODUTORNOME: TWideStringField
+      FieldName = 'NOME'
+      Size = 60
+    end
+    object ClntDtStPRODUTORDTCADASTRO: TSQLTimeStampField
+      FieldName = 'DTCADASTRO'
+    end
+    object ClntDtStPRODUTORDTEXCLUSAO: TSQLTimeStampField
+      FieldName = 'DTEXCLUSAO'
+    end
+    object ClntDtStPRODUTORDTULTALTER: TSQLTimeStampField
+      FieldName = 'DTULTALTER'
+    end
+  end
+  object DtSrcPRODUTOR: TDataSource
+    DataSet = ClntDtStPRODUTOR
+    OnStateChange = DtSrcPRODUTORStateChange
+    Left = 56
+    Top = 120
+  end
+end

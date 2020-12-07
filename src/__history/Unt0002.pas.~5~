@@ -1,0 +1,51 @@
+unit Unt0002;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DBXOracle, Data.DB, Data.SqlExpr,
+  Data.FMTBcd, Datasnap.DBClient, Datasnap.Provider;
+
+type
+  TDtM0002 = class(TDataModule)
+    sqcORALOGIN: TSQLConnection;
+    SQLQryPRODUTOR: TSQLQuery;
+    DtStPrvdrPRODUTOR: TDataSetProvider;
+    ClntDtStPRODUTOR: TClientDataSet;
+    DtSrcPRODUTOR: TDataSource;
+    ClntDtStPRODUTORCODPRODUTOR: TFMTBCDField;
+    ClntDtStPRODUTORCPFCNPJ: TWideStringField;
+    ClntDtStPRODUTORNOME: TWideStringField;
+    ClntDtStPRODUTORDTCADASTRO: TSQLTimeStampField;
+    ClntDtStPRODUTORDTEXCLUSAO: TSQLTimeStampField;
+    ClntDtStPRODUTORDTULTALTER: TSQLTimeStampField;
+    procedure DtSrcPRODUTORStateChange(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DtM0002: TDtM0002;
+
+implementation
+
+uses
+  UntProdutor, UntDistribuidor;
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+procedure TDtM0002.DtSrcPRODUTORStateChange(Sender: TObject);
+begin
+    FrmProdutor.BttnNOVO.Enabled := (Sender as TDataSource).State in [dsBrowse];
+    FrmProdutor.BttnALTERAR.Enabled := ((Sender as TDataSource).State in [dsBrowse]) and not ((Sender as TDataSource).DataSet.IsEmpty);
+    FrmProdutor.BttnFINALIZAR.Enabled := (Sender as TDataSource).State in [dsEdit, dsInsert];
+    FrmProdutor.BttnCANCELAR.Enabled := (Sender as TDataSource).State in [dsEdit, dsInsert];
+    FrmProdutor.BttnLISTARPRODUTOR.Enabled := (Sender as TDataSource).State in [dsBrowse];
+    FrmProdutor.BttnFECHAR.Enabled := (Sender as TDataSource).State in [dsBrowse];
+end;
+
+end.

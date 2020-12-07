@@ -1,0 +1,93 @@
+unit UntListaDistribuidor;
+
+interface
+
+uses
+    Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+    System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB,
+    Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls, Vcl.Mask, RxToolEdit, RxCurrEdit,
+    Vcl.ExtCtrls;
+
+type
+    TForm1 = class(TForm)
+        Image1: TImage;
+        Image2: TImage;
+        Panel2: TPanel;
+        Label4: TLabel;
+        Label5: TLabel;
+        Label6: TLabel;
+        CrrncyEdtCODIGO: TCurrencyEdit;
+        EdtNOME: TEdit;
+    EdtCNPJ: TEdit;
+        BttnLOCALIZAR: TButton;
+        BttnVERIFICAR: TButton;
+        DBGrid1: TDBGrid;
+        procedure BttnLOCALIZARClick(Sender: TObject);
+    procedure BttnVERIFICARClick(Sender: TObject);
+    private
+    { Private declarations }
+    public
+    { Public declarations }
+    end;
+
+var
+    Form1: TForm1;
+
+implementation
+
+uses
+  UntPrincipal, Unt0002, UntDistribuidor;
+
+{$R *.dfm}
+
+procedure TForm1.BttnLOCALIZARClick(Sender: TObject);
+begin
+
+    FrmDistribuidor.ClntDtStDISTRIB.Close;
+
+    with FrmDistribuidor.SQLQryDISTRIB do
+    begin
+        Close;
+        SQL.Clear;
+        SQL.Add('SELECT CODDISTRIB, CNPJ, NOME, LIMITECRED, DTCADASTRO, DTULTALTER');
+        SQL.Add('  FROM DISTRIBUIDOR');
+        SQL.Add(' WHERE CODDISTRIB <> 0 ');
+
+        if CrrncyEdtCODIGO.Value <> 0 then
+        begin
+            SQL.Add('   AND CODDISTRIB = :CODDISTRIB ');
+            Params.ParamByName('CODDISTRIB').AsBCD := CrrncyEdtCODIGO.Value;
+        end;
+
+        if EdtNOME.Text <> '' then
+        begin
+            SQL.Add('  AND NOME LIKE :NOME');
+            Params.ParamByName('NOME').AsString := EdtNOME.Text + '%';
+        end;
+
+        if EdtCNPJ.Text <> '' then
+        begin
+            SQL.Add('  AND REPLACE(REPLACE(REPLACE(CNPJ,''.'',''''),''/'',''''),''-'','''') = :CNPJ');
+            Params.ParamByName('CNPJ').AsString := FrmPrincipal.RemoveChars(EdtCNPJ.Text, './-');
+        end;
+
+        SQL.Add(' ORDER BY NOME');
+
+    end;
+
+    FrmDistribuidor.ClntDtStDISTRIB.Open;
+
+
+end;
+
+procedure TForm1.BttnVERIFICARClick(Sender: TObject);
+begin
+    if FrmDistribuidor.ClntDtStDISTRIB.RecordCount = 0 then
+        Abort;
+
+    FrmDistribuidor.BttnALTERARClick(Sender);
+    Close;
+end;
+
+end.
+
